@@ -1,68 +1,4 @@
-// import { StoredDirectoryInfo } from "@/constants/type"
-// import { getNonStringStoredData } from "../async-storage"
-// import { DIRECTORY_PERMISSION_KEY } from "@/constants"
-// import { documentPicker } from "./document-picker"
-// import { Directory } from "expo-file-system"
-// import Toast from "react-native-toast-message"
-
-// export const saveFile = async (prefix: string) => {
-
-//     const content = ''
-//     //TODO:? fetch data from inventory table
-
-//     let directory: Directory | null = null
-
-//     try {
-//         const permission = await getNonStringStoredData<StoredDirectoryInfo>(DIRECTORY_PERMISSION_KEY)
-
-//         if (!permission) {
-//             directory = await documentPicker()
-//             if (!directory?.exists) return Toast.show({
-//                 type: 'error',
-//                 text1: 'Direct does not exist!'
-//             })
-//         } else {
-//             const persistDirectory = new Directory(permission.directoryUri)
-
-//             if (!persistDirectory.exists) return Toast.show({
-//                 type: 'error',
-//                 text1: 'Directory is missing!'
-//             })
-//             directory = persistDirectory
-//         }
-
-
-//         const fileName = generateFileName(prefix)
-
-//         const newFile = directory.createFile(fileName, 'text/plain')
-//         newFile.write(content, { append: true })
-//         Toast.show({
-//             type: 'success',
-//             text1: 'File saved!'
-//         })
-
-//     } catch (error) {
-//         console.log("Failed to save file")
-//     }
-// }
-
-// const generateFileName = (prefix: string) => {
-//     const current = new Date()
-//     const date = String(current.getDate()).padStart(2, "0")
-//     const month = String(current.getMonth() + 1).padStart(2, "0")
-//     const year = current.getFullYear()
-
-//     const hours = String(current.getHours()).padStart(2, "0")
-//     const min = String(current.getMinutes()).padStart(2, "0")
-//     const sec = String(current.getSeconds()).padStart(2, "0")
-
-//     return `${prefix}_${date}${month}${year}_${hours}${min}${sec}.txt`
-// }
-
-
-
-
-import { DIRECTORY_PERMISSION_KEY } from "@/constants/variables";
+import { DIRECTORY_PERMISSION_KEY } from "@/constants";
 import { StoredDirectoryInfo } from "@/constants/type";
 import { Directory } from "expo-file-system";
 import Toast from "react-native-toast-message";
@@ -86,6 +22,7 @@ function showSuccess(message: string) {
 
 function generateFileName(prefix: string) {
     const now = new Date();
+
     return `${prefix}_${dateFns.format(now, 'ddMMyyyy_hhmmss aaa')}.txt`;
 }
 

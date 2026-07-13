@@ -1,4 +1,4 @@
-import { FILE_URI_KEY } from "@/constants/variables"
+import { FILE_URI_KEY } from "@/constants"
 import { getNonStringStoredData, storeData } from "../async-storage"
 import { StoredFileInfo } from "@/constants/type"
 import { Directory, File, Paths } from "expo-file-system"

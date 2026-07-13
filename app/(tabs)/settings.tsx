@@ -3,7 +3,7 @@ import { View } from 'react-native'
 import Container from '@/components/shared/container'
 import { useState } from "react"
 import { SettingsTab } from "@/constants/type"
-import { APP_SETTINGS_TAB, SETTINGS_TABS, USER_SETTINGS_TAB } from "@/constants/variables"
+import { APP_SETTINGS_TAB, SETTINGS_TABS, USER_SETTINGS_TAB } from "@/constants"
 import { capitalizeFirstLetter, cn, splitWord } from "@/lib/utils"
 import AppSettings from "@/components/app-settings"
 import { Text } from "@/components/ui/text"
