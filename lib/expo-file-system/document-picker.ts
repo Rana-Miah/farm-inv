@@ -1,6 +1,6 @@
 import { Directory } from 'expo-file-system'
 import { storeData } from '../async-storage'
-import { DIRECTORY_PERMISSION_KEY } from '@/constants'
+import { DIRECTORY_PERMISSION_KEY } from '@/constants/variables'
 import { StoredDirectoryInfo } from '@/constants/type'
 
 export const documentPicker = async () => {

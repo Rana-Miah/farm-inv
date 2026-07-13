@@ -1,4 +1,4 @@
-import { FILE_URI_KEY } from "@/constants"
+import { FILE_URI_KEY } from "@/constants/variables"
 import { getNonStringStoredData, storeData } from "../async-storage"
 import { StoredFileInfo } from "@/constants/type"
 import { Directory, File, Paths } from "expo-file-system"
@@ -9,7 +9,7 @@ import { showSuccess } from "../toast/success"
 
 
 
-const ensureDbDir = () => {
+export const ensureDbDir = () => {
     const directory = new Directory(Paths.document, 'database')
     if (!directory.exists) {
         directory.create()

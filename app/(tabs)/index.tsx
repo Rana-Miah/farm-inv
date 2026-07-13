@@ -3,7 +3,7 @@ import Container from '@/components/shared/container';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
-import { Link, Stack, Tabs } from 'expo-router';
+import { Link, } from 'expo-router';
 import { MoonStarIcon, StarIcon, SunIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
@@ -45,7 +45,7 @@ export default function Screen() {
         <View className="flex-row gap-2">
           <Link href="https://reactnativereusables.com" asChild>
           </Link>
-          <Button onPress={async () => getStoredData('storedDirectoryUri')}>
+          <Button onPress={() => { }}>
             <Text>Browse the Docs</Text>
           </Button>
           <Link href="https://github.com/founded-labs/react-native-reusables" asChild>

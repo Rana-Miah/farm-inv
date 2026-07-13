@@ -1,5 +1,5 @@
 import { getStoredData } from "@/components/pick-document"
-import { DIRECTORY_PERMISSION_KEY } from "@/constants"
+import { DIRECTORY_PERMISSION_KEY } from "@/constants/variables"
 import { StoredDirectoryInfo } from "@/constants/type"
 import { getNonStringStoredData, } from "@/lib/async-storage"
 import { storageEvent } from "@/lib/even-emitter/storage-event"

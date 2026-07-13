@@ -7,7 +7,7 @@ import { Separator } from './ui/separator'
 import { Button } from './ui/button'
 import { useFile, usePermission } from '@/hooks/permissions'
 import { removeStoredData } from '@/lib/async-storage'
-import { DIRECTORY_PERMISSION_KEY, FILE_URI_KEY } from '@/constants'
+import { DIRECTORY_PERMISSION_KEY, FILE_URI_KEY } from '@/constants/variables'
 import { filePicker } from '@/lib/expo-file-system/file-picker'
 
 const AppSettings = () => {

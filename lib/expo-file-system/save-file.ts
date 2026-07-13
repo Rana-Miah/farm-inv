@@ -62,11 +62,11 @@
 
 
 
-import { DIRECTORY_PERMISSION_KEY } from "@/constants";
+import { DIRECTORY_PERMISSION_KEY } from "@/constants/variables";
 import { StoredDirectoryInfo } from "@/constants/type";
 import { Directory } from "expo-file-system";
 import Toast from "react-native-toast-message";
-
+import * as dateFns from 'date-fns'
 import { getNonStringStoredData } from "../async-storage";
 import { documentPicker } from "./document-picker";
 
@@ -86,16 +86,7 @@ function showSuccess(message: string) {
 
 function generateFileName(prefix: string) {
     const now = new Date();
-
-    const date = String(now.getDate()).padStart(2, "0");
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const year = now.getFullYear();
-
-    const hour = String(now.getHours()).padStart(2, "0");
-    const minute = String(now.getMinutes()).padStart(2, "0");
-    const second = String(now.getSeconds()).padStart(2, "0");
-
-    return `${prefix}_${date}${month}${year}_${hour}${minute}${second}.txt`;
+    return `${prefix}_${dateFns.format(now, 'ddMMyyyy_hhmmss aaa')}.txt`;
 }
 
 function validateDirectory(directory: Directory | null): directory is Directory {
