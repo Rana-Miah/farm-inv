@@ -39,7 +39,7 @@ function DialogOverlay({
     <FullWindowOverlay>
       <DialogPrimitive.Overlay
         className={cn(
-          'absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-black/50 p-2',
+          'absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-black/10 p-2',
           Platform.select({
             web: 'animate-in fade-in-0 fixed cursor-default [&>*]:cursor-auto',
           }),
@@ -93,7 +93,7 @@ function DialogContent({
             hitSlop={12}>
             <Icon
               as={X}
-              className={cn('text-accent-foreground web:pointer-events-none size-4 shrink-0')}
+              className={cn('text-accent-foreground  web:pointer-events-none size-4 shrink-0')}
             />
             <Text className="sr-only">Close</Text>
           </DialogPrimitive.Close>

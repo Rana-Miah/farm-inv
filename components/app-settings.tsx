@@ -6,7 +6,7 @@ import { Separator } from './ui/separator'
 import { Button } from './ui/button'
 import { removeStoredData } from '@/lib/async-storage'
 import { DIRECTORY_PERMISSION_KEY, FILE_URI_KEY } from '@/constants'
-import { ensureDbDir } from '@/lib/expo-file-system/file-picker'
+import { ensureDbDir, filePicker } from '@/lib/expo-file-system/file-picker'
 import CardWrapper from './shared/card-wrapper'
 import { File } from 'expo-file-system'
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6'
@@ -59,8 +59,7 @@ const AppSettings = () => {
                     </View>
                     <View className='flex-row justify-between items-center'>
                         <Button
-                            // onPress={filePicker}
-                            onPress={test}
+                            onPress={filePicker}
                         >
                             <Text>Check Database</Text>
                         </Button>

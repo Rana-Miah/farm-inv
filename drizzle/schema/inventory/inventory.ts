@@ -2,8 +2,7 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { v4 as uuid } from 'uuid'
 
-import { SCAN_FLAG } from '@/constants'
-import { createdAt, updatedAt } from '@/drizzle/schema-helper'
+import { createdAt, updatedAt, SAVE_FLAG, SCAN_FLAG } from '@/drizzle/schema-helper'
 
 export const inventoryTable = sqliteTable('inventory', {
     id: text('id').notNull().primaryKey().unique().$defaultFn(() => uuid()),

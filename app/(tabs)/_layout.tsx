@@ -10,6 +10,7 @@ import { FontAwesome6 } from "@react-native-vector-icons/fontawesome6";
 
 
 import Toast from 'react-native-toast-message'
+import ModalProvider from '@/components/provider/modal-provider';
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -85,6 +86,7 @@ export default function RootLayout() {
       </Tabs>
       <Toast />
       <PortalHost />
+      <ModalProvider />
     </ThemeProvider>
   );
 }

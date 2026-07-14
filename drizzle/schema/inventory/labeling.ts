@@ -2,8 +2,7 @@
 import { sqliteTable, text, unique, } from 'drizzle-orm/sqlite-core'
 import { v4 as uuid } from 'uuid'
 
-import { SAVE_FLAG } from '@/constants'
-import { createdAt, updatedAt } from '@/drizzle/schema-helper'
+import { createdAt, updatedAt, SAVE_FLAG } from '@/drizzle/schema-helper'
 
 export const labelingTable = sqliteTable('labeling', {
     id: text('id').notNull().primaryKey().unique().$defaultFn(() => uuid()),

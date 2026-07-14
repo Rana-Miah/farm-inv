@@ -8,7 +8,7 @@ import { employeeTable } from './employee'
 export const employeeSettingsTable = sqliteTable('employee_settings', {
     id: text('id').notNull().primaryKey().unique().$defaultFn(() => uuid()),
     employeeId: text('employeeId').notNull().references(() => employeeTable.employeeId),
-    
+
     createdAt: createdAt('createdAt'),
     updatedAt: updatedAt('updatedAt'),
 })

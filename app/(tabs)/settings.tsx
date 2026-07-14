@@ -12,9 +12,6 @@ const Settings = () => {
     const [activeTab, setActiveTab] = useState<SettingsTab>('app-settings')
     return (
         <Container>
-            <View>
-                <Text >Settings</Text>
-            </View>
             {/* <Tabs value={value} onValueChange={setValue} className="w-[400px]"> */}
             <Tabs
                 value={activeTab}
