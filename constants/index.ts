@@ -33,6 +33,11 @@ export const multitaskVariants = [
 
 export type MultitaskVariantValues = (typeof SCAN_FLAG)[number];
 
+export const MODAL_TYPE = {
+    EMPLOYEE_CREATE_MODAL: "EMPLOYEE_CREATE_MODAL",
+    EMPLOYEE_UPDATE_MODAL: "EMPLOYEE_UPDATE_MODAL",
+} as const
+
 export const ORDER_NAME = [
     {
         name: 'Kwh',

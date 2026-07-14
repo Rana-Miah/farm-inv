@@ -7,20 +7,28 @@ import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 import InputField from '../shared/input-field'
+import { employeeCreateFormSchema, EmployeeCreateFormValue } from '@/lib/zod/employee-form-schema'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 const EmployeeCreateForm = () => {
-    const form = useForm<{
-        employeeId: number,
-        employeeTitle: string,
-        password: string,
-        name: string
-    }>({
+    const form = useForm<EmployeeCreateFormValue>({
         defaultValues: {
             employeeTitle: "",
             password: "",
             name: ""
-        }
+        },
+        resolver: zodResolver(employeeCreateFormSchema)
     })
+
+
+    const onSubmitHandler = form.handleSubmit(values => {
+        console.log({ values });
+
+    })
+
+
+
+
     return (
         <Form {...form}>
             <View className='gap-2 w-72'>
@@ -86,7 +94,7 @@ const EmployeeCreateForm = () => {
                         />
                     )}
                 />
-                <Button>
+                <Button onPress={onSubmitHandler}>
                     <Text>Create Employee</Text>
                 </Button>
             </View>

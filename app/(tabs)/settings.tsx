@@ -7,6 +7,7 @@ import { APP_SETTINGS_TAB, SETTINGS_TABS, USER_SETTINGS_TAB } from "@/constants"
 import { capitalizeFirstLetter, cn, splitWord } from "@/lib/utils"
 import AppSettings from "@/components/app-settings"
 import { Text } from "@/components/ui/text"
+import EmployeeSettings from "@/components/employee-settings"
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState<SettingsTab>('app-settings')
@@ -22,7 +23,7 @@ const Settings = () => {
                     <AppSettings />
                 </TabsContent>
                 <TabsContent value={USER_SETTINGS_TAB}>
-                    <Text>User Settings</Text>
+                    <EmployeeSettings />
                 </TabsContent>
 
                 <TabsList className="w-full justify-around mt-auto">

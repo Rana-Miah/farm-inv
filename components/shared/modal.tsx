@@ -25,11 +25,8 @@ type BaseProp = {
 } & Header
 const Modal = ({ description, onOpenChange, open, title, isWithoutHeader, footerContent, children }: BaseProp) => {
 
-    console.log({
-        description, title, isWithoutHeader,
-    })
     return (
-        <Dialog open className='min-w-56'>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger>
                 <Text>Open</Text>
             </DialogTrigger>
