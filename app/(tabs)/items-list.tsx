@@ -13,6 +13,7 @@ import { useEmployeesGetQuery } from '@/hooks/tanstack/mutation/employee'
 import { useModalAction } from '@/hooks/redux/use-modal'
 import { useLabelingGetQuery } from '@/hooks/tanstack/mutation/labeling'
 import { useRoute, useRouter } from 'expo-router'
+import { useState } from 'react'
 
 const ItemsList = () => {
     const { data: employees } = useEmployeesGetQuery()
@@ -88,7 +89,7 @@ const Inventory = ({ invLabels }: {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side='top'>
                         <DropdownMenuItem
-                            onPress={() => onOpen(MODAL_TYPE.LABELING_CREATE_MODAL)}
+                            onPress={() => onOpen(MODAL_TYPE.LABELING.CREATE)}
                             className='flex-row'
                         >
                             <FontAwesome6 name='circle-plus' iconStyle='solid' color={colorScheme === 'dark' ? 'white' : 'black'}
@@ -151,7 +152,7 @@ const Order = ({ orderLabels }: {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side='top'>
-                        <DropdownMenuItem onPress={() => onOpen(MODAL_TYPE.LABELING_CREATE_MODAL)} className='flex-row'
+                        <DropdownMenuItem onPress={() => onOpen(MODAL_TYPE.LABELING.CREATE)} className='flex-row'
                         >
                             <FontAwesome6 name='circle-plus' iconStyle='solid' color={colorScheme === 'dark' ? 'white' : 'black'}
                             />
@@ -187,7 +188,7 @@ const Tag = ({ employees }: {
         onPress: (prefix: string) => Promise<void>;
     }[]
 }) => {
-
+    const [, setOpen] = useState(false)
     const { colorScheme } = useColorScheme();
     const { onOpen } = useModalAction()
 
@@ -203,10 +204,9 @@ const Tag = ({ employees }: {
                 >
                     <Text>Tags</Text>
                 </Button>
-                <DropdownMenu >
+                <DropdownMenu  >
                     <DropdownMenuTrigger asChild>
                         <Button
-                            onPress={() => { }}
                             className='rounded-l-none'
                             size={'sm'}
                         >
@@ -218,7 +218,7 @@ const Tag = ({ employees }: {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side='top'>
-                        <DropdownMenuItem onPress={() => onOpen(MODAL_TYPE.EMPLOYEE_CREATE_MODAL)} className='flex-row'
+                        <DropdownMenuItem onPress={() => onOpen(MODAL_TYPE.EMPLOYEE.CREATE)} className='flex-row'
                         >
                             <FontAwesome6 name='circle-plus' iconStyle='solid' color={colorScheme === 'dark' ? 'white' : 'black'}
                             />
@@ -230,7 +230,7 @@ const Tag = ({ employees }: {
                                 <View key={emp.employeeId}>
                                     <DropdownMenuItem
                                         onPress={() => onPress(`tag-${emp.name}`)}
-                                        onLongPress={() => router.push(`/employee/${emp.employeeId}`,)}
+                                        onLongPress={(c) => router.push(`/employee/${emp.employeeId}`)}
                                     >
                                         <Text className='font-semibold'>{emp.name}</Text>
                                     </DropdownMenuItem>

@@ -6,18 +6,25 @@ import { Text } from '@/components/ui/text';
 import CardWrapper from '@/components/shared/card-wrapper';
 import EmployeeUpdateForm from '@/components/form/employee-update-form';
 import Container from '@/components/shared/container';
+import ChangePasswordModal from '@/components/modal/change-password-modal';
+import { useModalAction } from '@/hooks/redux/use-modal';
+import { MODAL_TYPE } from '@/constants';
 
 const EmployeeDetails = () => {
     const { empId } = useLocalSearchParams<{ empId: string }>();
+    const { onOpen } = useModalAction()
     return (
         <Container>
+            <ChangePasswordModal
+                employeeId={empId}
+            />
             <CardWrapper
                 title="Update Employee Form"
                 description="Edit that field want to update"
                 headerContent={
                     <Button
                         size={'sm'}
-                        onPress={() => { console.log('pressed') }}
+                        onPress={() => { onOpen(MODAL_TYPE.CHANGE_PASSWORD.UPDATE) }}
                     >
                         <Text>Change Password</Text>
                     </Button>
