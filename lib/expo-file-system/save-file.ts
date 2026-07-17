@@ -4,7 +4,7 @@ import { Directory } from "expo-file-system";
 import Toast from "react-native-toast-message";
 import * as dateFns from 'date-fns'
 import { getNonStringStoredData } from "../async-storage";
-import { documentPicker } from "./document-picker";
+import { directoryPicker } from "./directory-picker";
 
 function showError(message: string) {
     Toast.show({
@@ -41,7 +41,7 @@ export async function getDirectory(): Promise<Directory | null> {
     );
 
     if (!stored) {
-        const directory = await documentPicker();
+        const directory = await directoryPicker();
 
         if (!validateDirectory(directory)) {
             return null;

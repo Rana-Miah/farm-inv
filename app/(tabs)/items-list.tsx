@@ -1,4 +1,4 @@
-import { View, } from 'react-native'
+import { FlatList, View, } from 'react-native'
 import Container from '@/components/shared/container'
 import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
@@ -14,6 +14,8 @@ import { useModalAction } from '@/hooks/redux/use-modal'
 import { useLabelingGetQuery } from '@/hooks/tanstack/mutation/labeling'
 import { useRoute, useRouter } from 'expo-router'
 import { useState } from 'react'
+import ScannedItemCard from '@/components/shared/scanned-item-card'
+import { Input } from '@/components/ui/input'
 
 const ItemsList = () => {
     const { data: employees } = useEmployeesGetQuery()
@@ -22,7 +24,44 @@ const ItemsList = () => {
     return (
         <Container>
             <View className='flex-1 justify-between py-4'>
-                <Text >ItemsList</Text>
+                <View >
+                    {/* Inventory Save Form */}
+                    <View className="h-24 gap-2">
+                        <Input className="flex-1" placeholder="Item Title" />
+                        <Input
+                            className="flex-1"
+                            placeholder="Search"
+                            onChangeText={(value) => {
+                                // setSearchInputValue(value);
+                            }}
+                            value={""}
+                        />
+                    </View>
+
+                    {/* scanned items */}
+                    <FlatList
+                        className="pb-0 flex-1"
+                        showsVerticalScrollIndicator={false}
+                        data={[]}
+                        renderItem={({ item, index }) => (
+                            <ScannedItemCard
+                                key={''}
+                                item={item}
+                                enableActionBtn
+                                isCollapseAble
+                                defaultCollapse={index !== 0}
+                                onDelete={(item) => {
+                                    // dispatch(onOpen("item-list-delete"));
+                                    // setActionState({ type: "delete", item });
+                                }}
+                                onUpdate={(item) => {
+                                    // dispatch(onOpen("item-list-update"));
+                                    // setActionState({ type: "update", item });
+                                }}
+                            />
+                        )}
+                    />
+                </View>
                 <View className='flex-row justify-between'>
 
                     {/* INVENTORY */}

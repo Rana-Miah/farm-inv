@@ -3,7 +3,7 @@ import { storeData } from '../async-storage'
 import { DIRECTORY_PERMISSION_KEY } from '@/constants'
 import { StoredDirectoryInfo } from '@/constants/type'
 
-export const documentPicker = async () => {
+export const directoryPicker = async () => {
     const directory = await Directory.pickDirectoryAsync()
 
     if (!directory.exists) return null
