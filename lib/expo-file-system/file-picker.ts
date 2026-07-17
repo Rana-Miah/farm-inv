@@ -5,17 +5,10 @@ import { Directory, File, Paths } from "expo-file-system"
 import Toast from "react-native-toast-message"
 import { showError } from "../toast/error"
 import { showSuccess } from "../toast/success"
+import { ensureDbDir } from "./directory-picker"
 
 
 
-
-export const ensureDbDir = () => {
-    const directory = new Directory(Paths.document, 'database')
-    if (!directory.exists) {
-        directory.create()
-    }
-    return directory
-}
 
 
 const validateDbFile = (file: File) => {

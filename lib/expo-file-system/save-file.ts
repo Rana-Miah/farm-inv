@@ -1,24 +1,13 @@
 import { DIRECTORY_PERMISSION_KEY } from "@/constants";
 import { StoredDirectoryInfo } from "@/constants/type";
 import { Directory } from "expo-file-system";
-import Toast from "react-native-toast-message";
 import * as dateFns from 'date-fns'
 import { getNonStringStoredData } from "../async-storage";
-import { directoryPicker } from "./directory-picker";
+import { directoryPicker, getDirectory } from "@/lib/expo-file-system/directory-picker";
+import { getSavedItems } from "@/dal/item/get-item-save-file";
+import { showError } from "../toast/error";
+import { showSuccess } from "../toast/success";
 
-function showError(message: string) {
-    Toast.show({
-        type: "error",
-        text1: message,
-    });
-}
-
-function showSuccess(message: string) {
-    Toast.show({
-        type: "success",
-        text1: message,
-    });
-}
 
 function generateFileName(prefix: string) {
     const now = new Date();
@@ -26,38 +15,7 @@ function generateFileName(prefix: string) {
     return `${prefix}_${dateFns.format(now, 'ddMMyyyy_hhmmss aaa')}.txt`;
 }
 
-function validateDirectory(directory: Directory | null): directory is Directory {
-    if (!directory?.exists) {
-        showError("Directory does not exist!");
-        return false;
-    }
 
-    return true;
-}
-
-export async function getDirectory(): Promise<Directory | null> {
-    const stored = await getNonStringStoredData<StoredDirectoryInfo>(
-        DIRECTORY_PERMISSION_KEY
-    );
-
-    if (!stored) {
-        const directory = await directoryPicker();
-
-        if (!validateDirectory(directory)) {
-            return null;
-        }
-
-        return directory;
-    }
-
-    const directory = new Directory(stored.directoryUri);
-
-    if (!validateDirectory(directory)) {
-        return null;
-    }
-
-    return directory;
-}
 
 function createTextFile(
     directory: Directory,
@@ -71,10 +29,51 @@ function createTextFile(
     });
 }
 
+const generateInventoryContent = (items: NonNullable<Awaited<ReturnType<typeof getSavedItems>>['data']>['scannedItems']) => {
+
+    const content = items.map(item => {
+        return `${item.barcode}|${item.quantity}`
+    }).join('\n')
+
+    return content
+}
+type Item = NonNullable<Awaited<ReturnType<typeof getSavedItems>>['data']>['scannedItems'][number] & { pFlag: 'P' | 'R' | null }
+const generateTagsContent = (items: Item[]) => {
+
+    const promoItems = items.filter(item => item.pFlag === 'P')
+    const regularItems = items.filter(item => item.pFlag === 'R')
+
+
+    const promoContent = promoItems.map(item => {
+        return `${item.barcode}|${item.quantity}`
+    }).join('\n')
+    const regularContent = regularItems.map(item => {
+        return `${item.barcode}|${item.quantity}`
+    }).join('\n')
+
+    return {
+        promoContent,
+        regularContent
+    }
+}
+
+
+
 export async function saveFile(prefix: string) {
     try {
-        // TODO: Fetch data from inventory table
-        const content = "";
+        const res = await getSavedItems()
+        if (!res.data) return showError('Failed to get items to save')
+
+        const contentFn = {
+            tags: generateTagsContent,
+            inventory: generateInventoryContent
+        }
+
+        const fn = contentFn['inventory'](res.data.scannedItems)
+
+        let content: string
+
+        content = generateInventoryContent(res.data.scannedItems)
 
         const directory = await getDirectory();
 

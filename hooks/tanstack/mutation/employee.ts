@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm"
 import 'react-native-get-random-values';
 import bcrypt from 'bcryptjs'
 import { showError } from "@/lib/toast/error"
-import { saveFile } from "@/lib/expo-file-system"
+import { saveFile } from "@/lib/expo-file-system/save-file"
 
 export const useEmployeeCreateMutation = () => {
     return useMutation({

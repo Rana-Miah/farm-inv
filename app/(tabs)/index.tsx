@@ -139,11 +139,12 @@ export default function Screen() {
             />
             {
               scannedItemsCount && (
-                <View className='flex-row justify-center items-center gap-3 mb-2'>
+                <View className='flex-row justify-center items-center gap-3 py-2'>
                   {
                     scannedItemsCount.map(
                       itemCount => (
                         <Badge
+                          key={itemCount.scanFlag}
                         >
                           <Text className='font-semibold text-sm'>
                             {itemCount.scanFlag} : {itemCount.count}

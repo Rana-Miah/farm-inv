@@ -2,7 +2,7 @@ import { MUTATION_KEY } from "@/constants/tanstack-query"
 import { createLabeling } from "@/dal/employee/create-labeling"
 import { inventoryDb } from "@/drizzle/db/inventory-db"
 import { labelingTable } from "@/drizzle/schema/inventory"
-import { saveFile } from "@/lib/expo-file-system"
+import { saveFile } from "@/lib/expo-file-system/save-file"
 import { showError } from "@/lib/toast/error"
 import { useMutation, useQuery } from "@tanstack/react-query"
 

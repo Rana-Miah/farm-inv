@@ -1,7 +1,7 @@
 import { StoredDirectoryInfo } from "@/constants/type"
 import { getNonStringStoredData } from "../async-storage"
 import { DIRECTORY_PERMISSION_KEY } from "@/constants"
-import { directoryPicker } from "./directory-picker"
+import { directoryPicker } from "@/lib/expo-file-system/directory-picker"
 import { Directory } from "expo-file-system"
 import { showError } from "../toast/error"
 

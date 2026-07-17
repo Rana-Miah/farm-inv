@@ -7,7 +7,7 @@ import { invalidateEmployeeGetQuery } from '@/lib/tanstack-query/employee'
 import { invalidateLabelingGetQuery } from '@/lib/tanstack-query/labeling'
 
 import * as xlsx from 'xlsx'
-import { getDirectory } from '@/lib/expo-file-system'
+import { getDirectory } from '@/lib/expo-file-system/directory-picker'
 import { showSuccess } from '@/lib/toast/success'
 import { getScannedItems } from '@/dal/item/get-item'
 import { deleteScannedItems } from '@/dal/item/delete-items'
