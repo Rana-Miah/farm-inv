@@ -65,3 +65,14 @@ export const getItemByBarcode = async ({ barcode, scanType, isAdvanceMode }: Pic
         return failureResponse('Failed to get item!')
     }
 }
+
+export const getScannedItems = async () => {
+    try {
+        const scannedItems = await inventoryDb.select().from(inventoryTable)
+        const s = await inventoryDb.select().from(inventoryTable).groupBy(inventoryTable.scanFlag)
+
+        console.log({ s, scannedItems })
+    } catch (error) {
+
+    }
+}

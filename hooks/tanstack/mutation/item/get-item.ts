@@ -1,5 +1,5 @@
 import { MUTATION_KEY } from "@/constants/tanstack-query"
-import { getItemByBarcode } from "@/dal/item/get-item"
+import { getItemByBarcode, getScannedItems } from "@/dal/item/get-item"
 import { AddItemFormValue } from "@/lib/zod/add-item-form-schema"
 import { useMutation } from "@tanstack/react-query"
 
@@ -10,3 +10,7 @@ export const useGetItemByBarcode = () => {
     })
 }
 
+export const useGetScannedItems = () => useMutation({
+    mutationKey: [MUTATION_KEY.SCANNED_ITEM.READ],
+    mutationFn: getScannedItems
+})

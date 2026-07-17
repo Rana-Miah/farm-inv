@@ -9,6 +9,7 @@ import { invalidateLabelingGetQuery } from '@/lib/tanstack-query/labeling'
 import * as xlsx from 'xlsx'
 import { getDirectory } from '@/lib/expo-file-system'
 import { showSuccess } from '@/lib/toast/success'
+import { getScannedItems } from '@/dal/item/get-item'
 
 
 const createXl = async () => {
@@ -109,6 +110,9 @@ const EmployeeSettings = () => {
             </Button>
             <Button onPress={createXl}>
                 <Text>create xl</Text>
+            </Button>
+            <Button onPress={getScannedItems}>
+                <Text>stored data</Text>
             </Button>
         </View>
     )

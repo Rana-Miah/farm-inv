@@ -13,7 +13,7 @@ export function useDefaultUnitFromItemDetails(
     useEffect(() => {
         if (!itemDetails?.data?.item) return
 
-        setValue("uom", itemDetails?.data?.item.uom, {
+        setValue("uom", `${itemDetails?.data?.item.uom}|${itemDetails?.data?.item.packing}`, {
             shouldValidate: true,
             shouldDirty: true,
         })

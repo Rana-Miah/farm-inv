@@ -39,6 +39,7 @@ import { ItemDetails } from "../shared/item-details";
 import { useDefaultUnitFromItemDetails } from "@/hooks/use-default-unit";
 import Lucide from "@react-native-vector-icons/lucide";
 import { showDynamicToast } from "@/lib/toast/dynamic";
+import { useScanItemInsertMutation } from "@/hooks/tanstack/mutation/item/insert-item";
 
 
 
@@ -84,16 +85,24 @@ export default function AddItemForm() {
 
   //! Tanstack mutation hook
   const { mutate: getItemByBarcode, data: itemDetails, reset: resetGetItem } = useGetItemByBarcode()
+  const { mutate: insertScannedItem, } = useScanItemInsertMutation()
+
+
   useDefaultUnitFromItemDetails(form, itemDetails)
 
   //! handle submit function
   const onSubmit = handleSubmit((value) => {
 
-    handleResetForm();
 
-    barcodeInputRef.current?.focus();
-
-    console.log({ value })
+    insertScannedItem(value, {
+      onSuccess({ data, success, message }) {
+        showDynamicToast(message, success)
+        if (success) {
+          handleResetForm();
+          barcodeInputRef.current?.focus();
+        }
+      }
+    })
   });
 
   //! handle submit function
@@ -218,7 +227,7 @@ export default function AddItemForm() {
                                   ({ uom, barcode, packing }) => (
                                     <SelectItem
                                       key={barcode}
-                                      value={uom}
+                                      value={`${uom}|${String(packing)}`}
                                       label={`${uom} (${String(packing)})`}
                                     />
                                   )
