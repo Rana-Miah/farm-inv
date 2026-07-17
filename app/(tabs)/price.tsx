@@ -23,7 +23,7 @@ const Price = () => {
                 if (success) {
                     barcodeInputRef?.current?.focus();
                 }
-                showDynamicToast(message, success)
+                showDynamicToast(success, message)
             }
         })
     });

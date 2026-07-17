@@ -6,16 +6,25 @@ import { useGetItemByBarcode } from "./tanstack/mutation/item/get-item"
 
 export function useDefaultUnitFromItemDetails(
     form: UseFormReturn<AddItemFormValue>,
-    itemDetails: Awaited<ReturnType<typeof useGetItemByBarcode>>['data']
+    itemDetails: Awaited<ReturnType<typeof getItemByBarcode>>['data'] | undefined
 ) {
     const { setValue } = form
 
     useEffect(() => {
-        if (!itemDetails?.data?.item) return
 
-        setValue("uom", `${itemDetails?.data?.item.uom}|${itemDetails?.data?.item.packing}`, {
+        if (itemDetails?.item) {
+            setValue("uom", `${itemDetails?.item.uom}|${itemDetails?.item.packing}`, {
+                shouldValidate: true,
+                shouldDirty: true,
+            })
+        }
+
+        if (!itemDetails?.orderItem) return
+        setValue('uom', `${itemDetails?.orderItem.uom}|${itemDetails?.orderItem.packing}`, {
             shouldValidate: true,
             shouldDirty: true,
         })
+
+
     }, [itemDetails, setValue])
 }

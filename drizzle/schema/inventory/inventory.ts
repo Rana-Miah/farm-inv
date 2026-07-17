@@ -8,6 +8,7 @@ export const inventoryTable = sqliteTable('inventory', {
     id: text('id').notNull().primaryKey().unique().$defaultFn(() => uuid()),
     barcode: text('barcode').notNull(),
     item_number: text('item_number').notNull(),
+    description: text('description').notNull(),
     uom: text('uom').notNull(),
     packing: integer('packing').notNull(),
     quantity: integer('quantity').notNull(),

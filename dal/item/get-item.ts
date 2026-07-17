@@ -4,7 +4,7 @@ import { itemMasterTable } from "@/drizzle/schema/farm-schema"
 import { inventoryTable } from "@/drizzle/schema/inventory"
 import { failureResponse, successResponse } from "@/lib/response"
 import { AddItemFormValue } from "@/lib/zod/add-item-form-schema"
-import { and, eq, sql } from "drizzle-orm"
+import { and, asc, desc, eq, sql } from "drizzle-orm"
 
 export const getItemByBarcode = async ({ barcode, scanType, isAdvanceMode }: Pick<AddItemFormValue, 'scanType' | 'isAdvanceMode' | 'barcode'>) => {
     try {
@@ -42,16 +42,21 @@ export const getItemByBarcode = async ({ barcode, scanType, isAdvanceMode }: Pic
 
 
             if (itemAlreadyScanned) return successResponse({
+                isScanTypeOrder,
+                isDuplicated: itemAlreadyScanned,
                 orderItem: {
                     ...scannedItems[0],
                     itemUoms: uniqueUoms,
-                    isDuplicated: itemAlreadyScanned
                 },
                 item: null
-            })
+            },
+                'Oops! wanna delete or update the order item?'
+            )
         }
 
         return successResponse({
+            isScanTypeOrder,
+            isDuplicated: false,
             orderItem: null,
             item: {
                 ...item,
@@ -68,12 +73,16 @@ export const getItemByBarcode = async ({ barcode, scanType, isAdvanceMode }: Pic
 
 export const getScannedItems = async () => {
     try {
-        const scannedItems = await inventoryDb.select().from(inventoryTable)
-        const s = await inventoryDb.select({ scanFlag: inventoryTable.scanFlag, count: sql<number>`cast(count(*) as int)` }).from(inventoryTable).groupBy(inventoryTable.scanFlag)
+        const scannedItems = await inventoryDb.select().from(inventoryTable).orderBy(desc(inventoryTable.createdAt))
+        const scannedItemsCount = await inventoryDb.select({ scanFlag: inventoryTable.scanFlag, count: sql<number>`cast(count(*) as int)` }).from(inventoryTable).groupBy(inventoryTable.scanFlag)
 
-        console.log(s)
+        return successResponse({
+            scannedItems,
+            scannedItemsCount
+        })
 
     } catch (error) {
-
+        console.log(error)
+        return failureResponse('Failed to get scanned items')
     }
 }

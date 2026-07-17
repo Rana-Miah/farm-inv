@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 // import { DetailsRow } from "@/components/shared/details-row";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,22 +15,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
+import { getScannedItems } from "@/dal/item/get-item";
+import Lucide from "@react-native-vector-icons/lucide";
+import { DetailsRow } from "./details-row";
+import { Text } from "../ui/text";
+import { useColorScheme } from "nativewind";
 
+type Item = NonNullable<Awaited<ReturnType<typeof getScannedItems>>['data']>['scannedItems'][number]
 type WithActionBtn = {
-  item: unknown;
+  item: Item;
   enableActionBtn?: true;
   defaultCollapse: boolean;
   isCollapseAble: boolean;
-  onUpdate: (item: unknown) => void;
-  onDelete: (item: unknown) => void;
+  onUpdate: (item: Item) => void;
+  onDelete: (item: Item) => void;
 };
 type WithoutActionBtn = {
-  item: unknown;
+  item: Item;
   enableActionBtn?: false;
   defaultCollapse?: boolean;
   isCollapseAble?: boolean;
-  onUpdate?: (item: unknown) => void;
-  onDelete?: (item: unknown) => void;
+  onUpdate?: (item: Item) => void;
+  onDelete?: (item: Item) => void;
 };
 type ScannedItemCardProps = WithActionBtn | WithoutActionBtn;
 
@@ -48,6 +54,7 @@ const ScannedItemCard = ({
   );
 
   const quantityRef = React.useRef<any>(null);
+  const isDark = useColorScheme().colorScheme === 'dark'
 
   const form = useForm({
     defaultValues: {
@@ -74,23 +81,24 @@ const ScannedItemCard = ({
   }, [isEditState, item.quantity, form]);
 
   return (
-    <Card className="bg-white border-muted my-0.5 p-2 gap-4">
+    <Card className=" border-muted my-0.5 p-2 gap-4">
+      {/* Card Header Start */}
       <TouchableOpacity onPress={() => setIsCollapsed((prev) => !prev)}>
         <CardHeader className="flex-row items-center justify-between px-0">
           <View className="w-2/3">
             <View className="flex-row items-center gap-1">
-              <CardTitle className="text-black">BARCODE</CardTitle>
+              <CardTitle >BARCODE</CardTitle>
 
-              {item.scanFor && (
-                <Badge variant={"outline"} className="sha">
+              {item.scanFlag && (
+                <Badge variant={"outline"} >
                   <Text>
-                    {item.scanFor === "Inventory" ? "Inv" : item.scanFor}
+                    {item.scanFlag === "Inventory" ? "Inv" : item.scanFlag}
                   </Text>
                 </Badge>
               )}
             </View>
 
-            <CardDescription className="text-black">
+            <CardDescription >
               {item.barcode}
             </CardDescription>
           </View>
@@ -115,31 +123,33 @@ const ScannedItemCard = ({
                     size={"sm"}
                     onPress={onSubmit}
                   >
-                    <FontAwesome6 name={"save"}iconStyle="solid" color={"#124DA1"} size={14} />
+                    <Lucide name={"save"} color={"#124DA1"} size={14} />
                   </Button>
                 )}
               </>
             ) : (
               <ItemQuantityUnit
                 quantity={item.quantity}
-                uom={item.unitName ?? "N/A"}
+                uom={item.uom}
                 onPress={() => setIsEditState((prev) => !prev)}
               />
             )}
           </View>
         </CardHeader>
       </TouchableOpacity>
+      {/*! Card Header End */}
 
       {isCollapseAble && !isCollapsed && (
         <>
           <CardContent className="flex-col gap-2 px-0 py-0">
             <View className="flex-row items-center">
               <View className="flex-1">
-                {/* <DetailsRow
-                  icon={{ library: "FontAwesome", name: "hashtag" }}
+                <DetailsRow
+                  library="Lucide"
+                  iconName="hash"
                   label="item code"
-                  value={item.item_code ?? "N/A"}
-                /> */}
+                  value={item.item_number}
+                />
               </View>
               <Button
                 variant={"outline"}
@@ -149,16 +159,17 @@ const ScannedItemCard = ({
                 }}
               >
                 <Text className="text-muted-foreground">
-                  <FontAwesome6 name="copy" color="#000" />
+                  <Lucide name="copy" color={isDark ? '#fff' : '#000'} />
                 </Text>
-                <Text className="text-black">Barcode</Text>
+                <Text>Barcode</Text>
               </Button>
             </View>
-            {/* <DetailsRow
-              icon={{ library: "FontAwesome", name: "file-text" }}
+            <DetailsRow
+              library="Lucide"
+              iconName="file"
               label="description"
-              value={item.description ?? "N/A"}
-            /> */}
+              value={item.description}
+            />
           </CardContent>
           {enableActionBtn && (
             <>
@@ -166,11 +177,11 @@ const ScannedItemCard = ({
               <CardFooter className="items-center justify-between px-0">
                 <View className="flex-row items-center gap-2">
                   <View className="flex-row items-center justify-center w-8 h-8 bg-[#E8F1FC] rounded-md">
-                    {/* <MaterialIcons
+                    <Lucide
                       name={"layers"}
                       color={"#124DA1"}
                       size={20}
-                    /> */}
+                    />
                     <Text>Icon</Text>
                   </View>
                   <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -199,7 +210,7 @@ const ScannedItemCard = ({
                 ) : (
                   <ItemQuantityUnit
                     quantity={item.quantity}
-                    uom={item.unitName ?? "N/A"}
+                    uom={item.uom}
                     onPress={() => {
                       setIsEditState((prev) => !prev);
                       quantityRef.current?.focus();

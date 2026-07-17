@@ -59,7 +59,7 @@ function EmptyMedia({
 function EmptyTitle({ className, ...props }: TextProps) {
     return (
         <Text
-            className={cn("text-lg font-medium tracking-tight text-center", className)}
+            className={cn("dark:text-white text-black text-lg font-medium tracking-tight text-center", className)}
             {...props}
         />
     )

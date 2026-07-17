@@ -40,6 +40,8 @@ import { useDefaultUnitFromItemDetails } from "@/hooks/use-default-unit";
 import Lucide from "@react-native-vector-icons/lucide";
 import { showDynamicToast } from "@/lib/toast/dynamic";
 import { useScanItemInsertMutation } from "@/hooks/tanstack/mutation/item/insert-item";
+import { queryClient } from "../provider/tanstack-query-client";
+import { MUTATION_KEY } from "@/constants/tanstack-query";
 
 
 
@@ -88,17 +90,21 @@ export default function AddItemForm() {
   const { mutate: insertScannedItem, } = useScanItemInsertMutation()
 
 
-  useDefaultUnitFromItemDetails(form, itemDetails)
+  useDefaultUnitFromItemDetails(form, itemDetails?.data)
 
   //! handle submit function
   const onSubmit = handleSubmit((value) => {
 
     insertScannedItem(value, {
       onSuccess({ data, success, message }) {
-        showDynamicToast(message, success)
+        showDynamicToast(success, message)
         if (success) {
           handleResetForm();
+          resetGetItem()
           barcodeInputRef.current?.focus();
+          queryClient.invalidateQueries({
+            queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
+          })
         }
       }
     })
@@ -111,8 +117,14 @@ export default function AddItemForm() {
       getItemByBarcode(
         { barcode, isAdvanceMode, scanType },
         {
-          onSuccess({ success, message }) {
-            showDynamicToast(message, success)
+          onSuccess({ success, message, data }) {
+
+            showDynamicToast(
+              success,
+              data?.isDuplicated ? 'Duplicate item ordering!' : message,
+              data?.isDuplicated ? message : undefined
+            )
+
             if (success) {
               quantityInputRef.current?.focus()
             } else {
@@ -365,7 +377,7 @@ export default function AddItemForm() {
             <ItemDetails
               header={{
                 title: "Item Details",
-                description: itemDetails.data.orderItem?.isDuplicated
+                description: itemDetails.data.isDuplicated
                   ? "Duplicate scan for order"
                   : "Scanned item",
               }}

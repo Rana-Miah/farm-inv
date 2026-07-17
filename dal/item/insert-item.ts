@@ -35,13 +35,14 @@ export const insertScannedItem = async (formValue: AddItemFormValue) => {
             )
             const isDuplicateScanned = duplicateItems.length >= 1
 
-            if (isDuplicateScanned) return failureResponse('Oops! wanna delete or update the order item?')
+            if (isDuplicateScanned) return successResponse(duplicateItems[0], 'Oops! wanna delete or update the order item?')
         }
 
         const newAdded = await inventoryDb.insert(inventoryTable).values({
+            uom,
+            description: existItem.description,
             barcode: existItem.barcode,
             item_number: existItem.item_number,
-            uom,
             packing: Number(packing),
             quantity: Number(data.quantity),
             scanFlag: data.scanType

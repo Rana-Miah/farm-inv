@@ -22,6 +22,7 @@ import { ItemQuantityUnit } from "./scanned-item-card";
 import { getItemByBarcode } from "@/dal/item/get-item";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import { Text } from "../ui/text";
+import Lucide from "@react-native-vector-icons/lucide";
 
 type ScannedItemCardHeader = {
     title: string;
@@ -124,13 +125,18 @@ export const ItemDetails = ({
                             <CardTitle
                             // className="text-black"
                             >{header.title}</CardTitle>
-                            <CardDescription
-                            //  className="text-black"
-                            >
-                                {header.description || ""}
-                            </CardDescription>
+                            {
+                                header.description && (
+                                    <CardDescription
+                                    //  className="text-black"
+                                    >
+                                        {header.description}
+                                    </CardDescription>
+                                )
+                            }
                         </View>
 
+                        {/* /Card Header Component Like BUTTON OR BADGE */}
                         <View className="flex-row items-center gap-2 px-0">
                             {item.orderItem ? (
                                 <Button
@@ -152,19 +158,44 @@ export const ItemDetails = ({
                     </CardHeader>
 
                     <CardContent className="flex-col gap-2 px-0 py-0">
-                        <DetailsRow
-                            library="Lucide"
-                            iconName="hash"
-                            label="Item Code"
-                            value={item.item?.item_number ?? "no item code"}
-                        />
-                        <DetailsRow
-                            library="Lucide"
-                            iconName="file-text"
-                            // icon={{ library: "FontAwesome", name: "file-text" }}
-                            label="description"
-                            value={item.item?.description ?? ""}
-                        />
+                        {
+                            (item.item) && (
+                                <>
+                                    <DetailsRow
+                                        library="Lucide"
+                                        iconName="hash"
+                                        label="Item Code"
+                                        value={item.item?.item_number ?? "no item code"}
+                                    />
+                                    <DetailsRow
+                                        library="Lucide"
+                                        iconName="file-text"
+                                        // icon={{ library: "FontAwesome", name: "file-text" }}
+                                        label="description"
+                                        value={item.item?.description ?? ""}
+                                    />
+                                </>
+                            )
+                        }
+                        {
+                            (item.orderItem) && (
+                                <>
+                                    <DetailsRow
+                                        library="Lucide"
+                                        iconName="hash"
+                                        label="Item Code"
+                                        value={item.orderItem.item_number ?? "no item code"}
+                                    />
+                                    <DetailsRow
+                                        library="Lucide"
+                                        iconName="file-text"
+                                        // icon={{ library: "FontAwesome", name: "file-text" }}
+                                        label="description"
+                                        value={item.orderItem.description ?? ""}
+                                    />
+                                </>
+                            )
+                        }
                     </CardContent>
 
                     {item.orderItem && (
@@ -173,12 +204,11 @@ export const ItemDetails = ({
                             <CardFooter className="items-center justify-between px-0">
                                 <View className="flex-row items-center gap-2">
                                     <View className="flex-row items-center justify-center w-8 h-8 bg-[#E8F1FC] rounded-md">
-                                        {/* <MaterialIcons
+                                        <Lucide
                                             name={"layers"}
                                             color={"#124DA1"}
                                             size={20}
-                                        /> */}
-                                        <Text>Icon</Text>
+                                        />
                                     </View>
                                     <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                                         Order Quantity

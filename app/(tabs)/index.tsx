@@ -11,13 +11,16 @@ import { Link, } from 'expo-router';
 import { MoonStarIcon, StarIcon, SunIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
-import { ActivityIndicator, Image, type ImageStyle, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, type ImageStyle, View } from 'react-native';
 
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { inventoryDb } from '@/drizzle/db/inventory-db';
 import migrations from '@/drizzle/migration/inventoryDb/migrations'
 import { Card, CardContent } from '@/components/ui/card';
 import Lucide from '@react-native-vector-icons/lucide';
+import { useGetScannedItems } from '@/hooks/tanstack/mutation/item/get-item';
+import ScannedItemCard from '@/components/shared/scanned-item-card';
+import { Badge } from '@/components/ui/badge';
 const LOGO = {
   light: require('@/assets/images/react-native-reusables-light.png'),
   dark: require('@/assets/images/react-native-reusables-dark.png'),
@@ -59,6 +62,7 @@ export default function Screen() {
 
   const { success, error } = useMigrations(inventoryDb, migrations);
 
+  const { data, isPending, isLoading, isFetching, isFetched } = useGetScannedItems()
 
   if (error) {
     console.log({ error });
@@ -77,7 +81,16 @@ export default function Screen() {
     );
   }
 
-  const storedScannedItems: unknown[] = []
+  if (isPending) return (
+    <View>
+      <Text>Pending</Text>
+    </View>
+  );
+
+
+  const scannedItems = data?.data?.scannedItems
+  const scannedItemsCount = data?.data?.scannedItemsCount
+
   return (
     <Container>
       {/* <Tabs.Screen options={SCREEN_OPTIONS} />
@@ -109,21 +122,40 @@ export default function Screen() {
       <AddItemForm />
 
       {
-        storedScannedItems.length > 0 ? (
-          // <FlatList
-          //   className="pb-0 flex-1"
-          //   showsVerticalScrollIndicator={false}
-          //   data={storedScannedItems}
-          //   renderItem={({ item }) => (
-          //     <ScannedItemCard
-          //       key={item.barcode}
-          //       item={item}
-          //       isCollapseAble
-          //       defaultCollapse={false}
-          //     />
-          //   )}
-          // />
-          <Text>Show scanned items</Text>
+        scannedItems?.length ? (
+          <View className='flex-1'>
+            <FlatList
+              className="pb-0 flex-1"
+              showsVerticalScrollIndicator={false}
+              data={scannedItems}
+              renderItem={({ item, index }) => (
+                <ScannedItemCard
+                  key={item.barcode + index}
+                  item={item}
+                  isCollapseAble
+                  defaultCollapse={false}
+                />
+              )}
+            />
+            {
+              scannedItemsCount && (
+                <View className='flex-row justify-center items-center gap-3 mb-2'>
+                  {
+                    scannedItemsCount.map(
+                      itemCount => (
+                        <Badge
+                        >
+                          <Text className='font-semibold text-sm'>
+                            {itemCount.scanFlag} : {itemCount.count}
+                          </Text>
+                        </Badge>
+                      )
+                    )
+                  }
+                </View>
+              )
+            }
+          </View>
         ) : (
           <EmptyState
             icon={<Lucide name='package' size={28} />}

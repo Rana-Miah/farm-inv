@@ -6,6 +6,7 @@ import m0001 from './0001_minor_vindicator.sql';
 import m0002 from './0002_messy_proudstar.sql';
 import m0003 from './0003_strange_ben_urich.sql';
 import m0004 from './0004_aromatic_gamma_corps.sql';
+import m0005 from './0005_spooky_hellcat.sql';
 
   export default {
     journal,
@@ -14,7 +15,8 @@ import m0004 from './0004_aromatic_gamma_corps.sql';
 m0001,
 m0002,
 m0003,
-m0004
+m0004,
+m0005
     }
   }
   
