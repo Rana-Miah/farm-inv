@@ -93,7 +93,6 @@ export default function AddItemForm() {
   //! handle submit function
   const onSubmit = handleSubmit((value) => {
 
-
     insertScannedItem(value, {
       onSuccess({ data, success, message }) {
         showDynamicToast(message, success)

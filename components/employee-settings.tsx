@@ -10,6 +10,7 @@ import * as xlsx from 'xlsx'
 import { getDirectory } from '@/lib/expo-file-system'
 import { showSuccess } from '@/lib/toast/success'
 import { getScannedItems } from '@/dal/item/get-item'
+import { deleteScannedItems } from '@/dal/item/delete-items'
 
 
 const createXl = async () => {
@@ -113,6 +114,9 @@ const EmployeeSettings = () => {
             </Button>
             <Button onPress={getScannedItems}>
                 <Text>stored data</Text>
+            </Button>
+            <Button onPress={deleteScannedItems}>
+                <Text>delete scanned data</Text>
             </Button>
         </View>
     )

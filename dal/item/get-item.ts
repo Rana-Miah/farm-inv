@@ -4,7 +4,7 @@ import { itemMasterTable } from "@/drizzle/schema/farm-schema"
 import { inventoryTable } from "@/drizzle/schema/inventory"
 import { failureResponse, successResponse } from "@/lib/response"
 import { AddItemFormValue } from "@/lib/zod/add-item-form-schema"
-import { and, eq } from "drizzle-orm"
+import { and, eq, sql } from "drizzle-orm"
 
 export const getItemByBarcode = async ({ barcode, scanType, isAdvanceMode }: Pick<AddItemFormValue, 'scanType' | 'isAdvanceMode' | 'barcode'>) => {
     try {
@@ -69,9 +69,10 @@ export const getItemByBarcode = async ({ barcode, scanType, isAdvanceMode }: Pic
 export const getScannedItems = async () => {
     try {
         const scannedItems = await inventoryDb.select().from(inventoryTable)
-        const s = await inventoryDb.select().from(inventoryTable).groupBy(inventoryTable.scanFlag)
+        const s = await inventoryDb.select({ scanFlag: inventoryTable.scanFlag, count: sql<number>`cast(count(*) as int)` }).from(inventoryTable).groupBy(inventoryTable.scanFlag)
 
-        console.log({ s, scannedItems })
+        console.log(s)
+
     } catch (error) {
 
     }

@@ -16,6 +16,8 @@ export const insertScannedItem = async (formValue: AddItemFormValue) => {
         const [uom, packing] = splitWord(data.uom, '|')
         const isOrder = data.scanType === 'Order'
 
+        console.log({ data })
+
         if (Number(data.quantity) <= 0) return failureResponse('Quantity must grater than 0')
 
         const [existItem] = await farmDb.select().from(itemMasterTable).where(
@@ -42,6 +44,7 @@ export const insertScannedItem = async (formValue: AddItemFormValue) => {
             uom,
             packing: Number(packing),
             quantity: Number(data.quantity),
+            scanFlag: data.scanType
         }).returning()
         return successResponse(newAdded, 'Item added!')
 
