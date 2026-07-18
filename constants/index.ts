@@ -37,16 +37,17 @@ export type MultitaskVariantValues = (typeof SCAN_FLAG)[number];
 type Modal = 'EMPLOYEE' | 'LABELING' | 'CHANGE_PASSWORD'
 type Type = 'CREATE' | 'UPDATE'
 
-type ModalTypeStructure = {
+
+type ModalTypeMap = {
     [M in Modal]: {
         [T in Type]: `${M}_${T}_MODAL`
     }
 }
 
-export type ModalType = ModalTypeStructure[Modal][Type]
+export type ModalType = ModalTypeMap[Modal][Type]
 
 
-export const MODAL_TYPE: ModalTypeStructure = {
+export const MODAL_TYPE: ModalTypeMap = {
     EMPLOYEE: {
         CREATE: 'EMPLOYEE_CREATE_MODAL',
         UPDATE: 'EMPLOYEE_UPDATE_MODAL',
@@ -59,4 +60,22 @@ export const MODAL_TYPE: ModalTypeStructure = {
         CREATE: 'LABELING_CREATE_MODAL',
         UPDATE: 'LABELING_UPDATE_MODAL',
     }
-} 
+}
+
+type AlertModal = 'ORDER' //| 'LABELING' | 'EMPLOYEE'
+type AlertType = 'DELETE' | 'UPDATE'
+
+type AlertModalTypeMap = {
+    [AM in AlertModal]: {
+        [AT in AlertType]: `${AM}_${AT}_ALERT_MODAL`
+    }
+}
+export type AlertModalType = AlertModalTypeMap[AlertModal][AlertType]
+
+
+export const ALERT_MODAL_TYPE: AlertModalTypeMap = {
+    ORDER: {
+        UPDATE: 'ORDER_UPDATE_ALERT_MODAL',
+        DELETE: 'ORDER_DELETE_ALERT_MODAL'
+    }
+}

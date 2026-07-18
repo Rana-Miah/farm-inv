@@ -3,16 +3,7 @@ import { inventoryTable } from "@/drizzle/schema/inventory"
 import { failureResponse, successResponse } from "@/lib/response"
 import { and, eq } from "drizzle-orm"
 
-export const deleteScannedItems = async () => {
-    try {
-        const scannedItems = await inventoryDb.delete(inventoryTable)
-
-    } catch (error) {
-
-    }
-}
-
-export const deleteOrderItemsByBarcode = async (barcode: string) => {
+export const updateOrderItemByBarcode = async (barcode: string, quantity: string) => {
     try {
         const [existOrderItem] = await inventoryDb.select().from(inventoryTable).where(
             and(
@@ -21,17 +12,20 @@ export const deleteOrderItemsByBarcode = async (barcode: string) => {
             )
         )
 
-        if (!existOrderItem) return failureResponse('Order item not found to delete!')
+        if (!existOrderItem) return failureResponse('Order item not found to update!')
 
-        await inventoryDb.delete(inventoryTable).where(
+        const [updatedOrderItem] = await inventoryDb.update(inventoryTable).set({
+            quantity: Number(quantity)
+        }).where(
             and(
                 eq(inventoryTable.barcode, barcode),
                 eq(inventoryTable.scanFlag, 'Order')
             )
-        )
-        return successResponse(existOrderItem, 'Order item deleted!')
+        ).returning()
+        return successResponse(updatedOrderItem, 'Order item updated!')
     } catch (error) {
-        console.log('failed to delete order item', error)
-        return failureResponse('Failed to delete order item')
+        console.log('Order item', error)
+        return failureResponse('Order item updated!')
+
     }
 }

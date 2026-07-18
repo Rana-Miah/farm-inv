@@ -38,6 +38,10 @@ import { showDynamicToast } from "@/lib/toast/dynamic";
 import { useScanItemInsertMutation } from "@/hooks/tanstack/mutation/item/insert-item";
 import { queryClient } from "../provider/tanstack-query-client";
 import { MUTATION_KEY } from "@/constants/tanstack-query";
+import { useUpdateOrderItem } from "@/hooks/tanstack/mutation/item/update-item";
+import { useDeleteOrderItem } from "@/hooks/tanstack/mutation/item/delete-item ";
+import { OrderItemDetails } from "../shared/order-item-details";
+import { useAlertModalAction } from "@/hooks/redux/use-alert-modal";
 
 
 
@@ -58,7 +62,6 @@ export default function AddItemForm() {
       quantity: "",
       isAdvanceMode: false,
     },
-    resolver: zodResolver(addItemFormSchema),
   });
 
 
@@ -83,7 +86,11 @@ export default function AddItemForm() {
 
   //! Tanstack mutation hook
   const { mutate: getItemByBarcode, data: itemDetails, reset: resetGetItem } = useGetItemByBarcode()
+  const { mutate: updateOrderItemByBarcode } = useUpdateOrderItem()
+  const { mutate: deleteOrderItemByBarcode } = useDeleteOrderItem()
   const { mutate: insertScannedItem, } = useScanItemInsertMutation()
+
+  const { onAlertClose } = useAlertModalAction()
 
 
   useDefaultUnitFromItemDetails(form, itemDetails?.data)
@@ -99,6 +106,7 @@ export default function AddItemForm() {
           resetGetItem()
           // OK
           barcodeInputRef.current?.focus();
+          console.log('barcode focused from onSubmit')
           queryClient.invalidateQueries({
             queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
           })
@@ -125,6 +133,8 @@ export default function AddItemForm() {
             if (success) {
               // Ok
               quantityInputRef.current?.focus()
+              console.log('Quantity focused from onSubmit')
+
             }
 
           }
@@ -147,6 +157,9 @@ export default function AddItemForm() {
       scanType: currentAdvanceMode ? (currentScanFor ?? "Inventory") : undefined,
     });
   };
+
+
+
 
 
   if (!isHydrated) return null
@@ -371,46 +384,60 @@ export default function AddItemForm() {
             )}
           </View>
         </View>
-        <View>
-          {itemDetails && itemDetails.data && (
+      </Form>
+
+      <View>
+        {
+          (itemDetails?.data && itemDetails.data.item) && (
             <ItemDetails
-              header={{
-                title: "Item Details",
-                description: itemDetails.data.isDuplicated
-                  ? "Duplicate scan for order"
-                  : "Scanned item",
-              }}
-              item={itemDetails.data}
-              onUpdate={(item, quantity) => {
-                // updateScannedItemMutation(
-                //   {
-                //     storedScannedItemId: item.storedItem?.storedId!,
-                //     quantity: quantity.toString(),
-                //   },
-                //   {
-                //     onSuccess() {
-                //       dispatch(onClose());
-                //       handleResetForm();
-                //       refetchStoredItems();
-                //       resetItemDetailsMutation();
-                //     },
-                //   },
-                // );
-              }}
+              title="Item Details"
+              description="Scanned item"
+              item={itemDetails.data.item}
+            />
+          )
+        }
+        {
+          (itemDetails?.data && itemDetails.data.orderItem) && (
+            <OrderItemDetails
+              title="Item Details"
+              description="Scanned item"
+              orderItem={itemDetails.data.orderItem}
               onDelete={(item) => {
-                // deleteScannedItemMutation(item.storedItem?.storedId!, {
-                //   onSuccess() {
-                //     dispatch(onClose());
-                //     refetchStoredItems();
-                //     handleResetForm();
-                //     resetItemDetailsMutation();
-                //   },
-                // });
+                deleteOrderItemByBarcode(item.barcode, {
+                  onSuccess(data) {
+                    if (data.success) {
+                      onAlertClose()
+                      form.reset()
+                      resetGetItem()
+                      queryClient.invalidateQueries({
+                        queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
+                      })
+                    }
+                  }
+                })
+              }}
+              onUpdate={(item, quantity) => {
+                updateOrderItemByBarcode(
+                  { barcode: item.barcode, quantity },
+                  {
+                    onSuccess(data) {
+                      if (data.success) {
+                        onAlertClose()
+                        form.reset()
+                        resetGetItem()
+                        queryClient.invalidateQueries({
+                          queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
+                        })
+                      }
+                    }
+                  }
+                )
               }}
             />
-          )}
-        </View>
-      </Form>
+          )
+        }
+
+      </View>
     </>
   );
 }

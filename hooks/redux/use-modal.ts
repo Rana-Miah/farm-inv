@@ -1,5 +1,6 @@
-import { modalAction, ModalType } from "@/lib/redux/slice/modal-slice"
+import { modalAction } from "@/lib/redux/slice/modal-slice"
 import { useAppDispatch, useAppSelector } from "."
+import { ModalType } from "@/constants"
 
 export const useModalAction = () => {
     const dispatch = useAppDispatch()

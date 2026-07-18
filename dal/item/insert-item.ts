@@ -11,12 +11,10 @@ import { and, eq } from "drizzle-orm";
 export const insertScannedItem = async (formValue: AddItemFormValue) => {
     try {
         const validation = addItemFormSchema.safeParse(formValue)
-        if (!validation.success) return failureResponse(validation.error.message)
+        if (!validation.success) return failureResponse('Invalid Fields!')
         const { data } = validation
         const [uom, packing] = splitWord(data.uom, '|')
         const isOrder = data.scanType === 'Order'
-
-        console.log({ data })
 
         if (Number(data.quantity) <= 0) return failureResponse('Quantity must grater than 0')
 
