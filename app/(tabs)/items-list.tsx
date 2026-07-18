@@ -12,40 +12,37 @@ import { saveFile } from '@/lib/expo-file-system/save-file'
 import { useEmployeesGetQuery } from '@/hooks/tanstack/mutation/employee'
 import { useModalAction } from '@/hooks/redux/use-modal'
 import { useLabelingGetQuery } from '@/hooks/tanstack/mutation/labeling'
-import { useRoute, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import ScannedItemCard from '@/components/shared/scanned-item-card'
 import { Input } from '@/components/ui/input'
 
-
-import {
-    Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarSeparator,
-    MenubarShortcut,
-    MenubarTrigger,
-} from "@/components/ui/menubar"
-
 const ItemsList = () => {
     const { data: employees } = useEmployeesGetQuery()
     const { data: label } = useLabelingGetQuery()
+    const [inputValue, setInputValue] = useState({ search: "", title: "" })
 
     return (
         <Container>
-            <View className='flex-1 justify-between py-4'>
+            <View className='flex-1 justify-between py-2'>
                 <View >
                     {/* Inventory Save Form */}
-                    <View className="h-24 gah-8">
-                        <Input className="flex-1" placeholder="Item Title" />
+                    <View className="h-20 gap-2">
+                        <Input
+                            className="flex-1"
+                            placeholder="Item Title"
+                            onChangeText={(text) => {
+                                setInputValue(prev => ({ ...prev, title: text }))
+                            }}
+                            value={inputValue.title}
+                        />
                         <Input
                             className="flex-1"
                             placeholder="Search"
-                            onChangeText={(value) => {
-                                // setSearchInputValue(value);
+                            onChangeText={(text) => {
+                                setInputValue(prev => ({ ...prev, search: text }))
                             }}
-                            value={""}
+                            value={inputValue.search}
                         />
                     </View>
 
@@ -75,7 +72,7 @@ const ItemsList = () => {
                 </View>
 
                 {/* below buttons */}
-                <View className='bg-background  flex h-10 flex-row justify-between items-center gap-1 rounded-md p-1 shadow-sm shadow-black/5 sm:h-9'>
+                <View className='bg-background flex-row justify-between items-center gap-1 rounded-md p-1 shadow-sm shadow-black/5'>
                     {/* INVENTORY */}
                     <Inventory invLabels={label?.invLabels ?? []} />
                     {/* TAGS */}

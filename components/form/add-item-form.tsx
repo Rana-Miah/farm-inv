@@ -29,7 +29,6 @@ import {
 import { Separator } from "../ui/separator";
 import { Switch } from "../ui/switch";
 import { Text } from "../ui/text";
-import z from "zod";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import { useColorScheme } from "nativewind";
 import { addItemFormSchema, AddItemFormValue } from "@/lib/zod/add-item-form-schema";
@@ -171,7 +170,6 @@ export default function AddItemForm() {
                     ref={barcodeInputRef}
                     placeholder="Barcode/Item-Code"
                     keyboardType="numeric"
-                    // returnKeyType="next"
                     onChangeText={(text) => {
                       field.onChange(text)
                       if (text.length === 0) {
