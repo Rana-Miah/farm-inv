@@ -22,15 +22,21 @@ const ItemsList = () => {
     const { data: employees } = useEmployeesGetQuery()
     const { data: label } = useLabelingGetQuery()
     const [inputValue, setInputValue] = useState({ search: "", title: "" })
-    const { data: items, isPending, isLoading, isFetching, isFetched } = useGetScannedItems()
+    const { data: items, } = useGetScannedItems()
     const { data: searchItems } = useGetStoredScannedItemsSearch(inputValue.search)
 
-    const data = inputValue.search.length > 0 ? searchItems?.data : items?.data?.scannedItems
+    const allItems = (inputValue.search.length > 0 ? searchItems?.data : items?.data?.scannedItems)
+
+    const data = allItems ? allItems : []
+
+
+
+    // console.log({ items, searchItems, data })
 
     return (
         <Container>
             <View className='flex-1 justify-between py-2'>
-                <View >
+                <View className='flex-1'>
                     {/* Inventory Save Form */}
                     <View className="h-20 gap-2">
                         <Input
@@ -55,24 +61,28 @@ const ItemsList = () => {
                     <FlatList
                         className="pb-0 flex-1"
                         showsVerticalScrollIndicator={false}
-                        data={data ?? []}
-                        renderItem={({ item, index }) => (
-                            <ScannedItemCard
-                                key={''}
-                                item={item}
-                                enableActionBtn
-                                isCollapseAble
-                                defaultCollapse={index !== 0}
-                                onDelete={(item) => {
-                                    // dispatch(onOpen("item-list-delete"));
-                                    // setActionState({ type: "delete", item });
-                                }}
-                                onUpdate={(item) => {
-                                    // dispatch(onOpen("item-list-update"));
-                                    // setActionState({ type: "update", item });
-                                }}
-                            />
-                        )}
+                        data={data}
+                        renderItem={({ item, index }) => {
+                            console.log({ item })
+
+                            return (
+                                <ScannedItemCard
+                                    key={item.id}
+                                    item={item}
+                                    enableActionBtn
+                                    isCollapseAble
+                                    defaultCollapse={index !== 0}
+                                    onDelete={(item) => {
+                                        // dispatch(onOpen("item-list-delete"));
+                                        // setActionState({ type: "delete", item });
+                                    }}
+                                    onUpdate={(item) => {
+                                        // dispatch(onOpen("item-list-update"));
+                                        // setActionState({ type: "update", item });
+                                    }}
+                                />
+                            )
+                        }}
                     />
                 </View>
 

@@ -181,7 +181,6 @@ const ScannedItemCard = ({
                       color={"#124DA1"}
                       size={20}
                     />
-                    <Text>Icon</Text>
                   </View>
                   <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Quantity
