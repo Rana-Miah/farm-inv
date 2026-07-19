@@ -29,3 +29,25 @@ export const updateOrderItemByBarcode = async (barcode: string, quantity: string
 
     }
 }
+
+export const updateItemById = async (id: string, quantity: string,) => {
+    try {
+        const [existItem] = await inventoryDb.select().from(inventoryTable).where(
+            eq(inventoryTable.id, id),
+        )
+
+        if (!existItem) return failureResponse('Order item not found to update!')
+
+        const [updatedOrderItem] = await inventoryDb.update(inventoryTable).set({
+            quantity: Number(quantity)
+        }).where(
+            eq(inventoryTable.id, id),
+        ).returning()
+
+        return successResponse(updatedOrderItem, 'Item updated!')
+    } catch (error) {
+        console.log('Order item', error)
+        return failureResponse('Order item updated!')
+
+    }
+}

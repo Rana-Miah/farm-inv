@@ -3,6 +3,7 @@ import Toast from "react-native-toast-message"
 export const showError = (msg: string) => {
     Toast.show({
         type: 'error',
-        text1: msg
+        text1: msg,
+        visibilityTime: 1000
     })
 }

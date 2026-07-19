@@ -64,7 +64,7 @@ export const MODAL_TYPE: ModalTypeMap = {
     }
 }
 
-type AlertModal = 'ORDER' //| 'LABELING' | 'EMPLOYEE'
+type AlertModal = 'ORDER' | 'SCANNED_ITEM'//| 'LABELING' | 'EMPLOYEE'
 type AlertType = 'DELETE' | 'UPDATE'
 
 type AlertModalTypeMap = {
@@ -79,5 +79,9 @@ export const ALERT_MODAL_TYPE: AlertModalTypeMap = {
     ORDER: {
         UPDATE: 'ORDER_UPDATE_ALERT_MODAL',
         DELETE: 'ORDER_DELETE_ALERT_MODAL'
+    },
+    SCANNED_ITEM: {
+        UPDATE: 'SCANNED_ITEM_UPDATE_ALERT_MODAL',
+        DELETE: 'SCANNED_ITEM_DELETE_ALERT_MODAL'
     }
 }

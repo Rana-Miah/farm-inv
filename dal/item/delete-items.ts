@@ -17,7 +17,7 @@ export const deleteScannedItems = async () => {
     }
 }
 
-export const deleteOrderItemsByBarcode = async (barcode: string) => {
+export const deleteOrderItemByBarcode = async (barcode: string) => {
     try {
         const [existOrderItem] = await inventoryDb.select().from(inventoryTable).where(
             and(
@@ -38,5 +38,23 @@ export const deleteOrderItemsByBarcode = async (barcode: string) => {
     } catch (error) {
         console.log('failed to delete order item', error)
         return failureResponse('Failed to delete order item')
+    }
+}
+
+export const deleteItemById = async (id: string) => {
+    try {
+        const [existItem] = await inventoryDb.select().from(inventoryTable).where(
+            eq(inventoryTable.id, id),
+        )
+
+        if (!existItem) return failureResponse('Order item not found to delete!')
+
+        await inventoryDb.delete(inventoryTable).where(
+            eq(inventoryTable.id, id),
+        )
+        return successResponse(existItem, 'Order item deleted!')
+    } catch (error) {
+        console.log('failed to delete item', error)
+        return failureResponse('Failed to delete item')
     }
 }

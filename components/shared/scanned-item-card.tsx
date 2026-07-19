@@ -80,147 +80,150 @@ const ScannedItemCard = ({
   }, [isEditState, item.quantity, form]);
 
   return (
-    <Card className=" border-muted my-0.5 p-2 gap-4">
-      {/* Card Header Start */}
-      <TouchableOpacity onPress={() => setIsCollapsed((prev) => !prev)}>
-        <CardHeader className="flex-row items-center justify-between px-0">
-          <View className="w-2/3">
-            <View className="flex-row items-center gap-1">
-              <CardTitle className="text-sm">BARCODE</CardTitle>
+    <>
 
-              {item.scanFlag && (
-                <Badge variant={"outline"} >
-                  <Text className="text-xs">
-                    {item.scanFlag === "Inventory" ? "Inv" : item.scanFlag}
-                  </Text>
-                </Badge>
+      <Card className=" border-muted my-0.5 p-2 gap-4">
+        {/* Card Header Start */}
+        <TouchableOpacity onPress={() => setIsCollapsed((prev) => !prev)}>
+          <CardHeader className="flex-row items-center justify-between px-0">
+            <View className="w-2/3">
+              <View className="flex-row items-center gap-1">
+                <CardTitle className="text-sm">BARCODE</CardTitle>
+
+                {item.scanFlag && (
+                  <Badge variant={"outline"} >
+                    <Text className="text-xs">
+                      {item.scanFlag === "Inventory" ? "Inv" : item.scanFlag}
+                    </Text>
+                  </Badge>
+                )}
+              </View>
+
+              <CardDescription >
+                {item.barcode}
+              </CardDescription>
+            </View>
+
+            <View>
+              {enableActionBtn ? (
+                <>
+                  {
+                    !isEditState ? (
+                      <Button
+                        variant={"destructive"}
+                        size={"sm"}
+                        onPress={() => { onDelete(item) }}
+                      >
+                        <Lucide name={"trash"} size={14} color={"#fff"} />
+                      </Button>
+                    ) : (
+                      <Button
+                        variant={"outline"}
+                        className="bg-[#E8F1FC]"
+                        size={"sm"}
+                        onPress={onSubmit}
+                      >
+                        <Lucide name={"save"} color={"#124DA1"} size={14} />
+                      </Button>
+                    )
+                  }
+                </>
+              ) : (
+                <ItemQuantityUnit
+                  quantity={item.quantity}
+                  uom={item.uom}
+                  onPress={() => setIsEditState((prev) => !prev)}
+                />
               )}
             </View>
+          </CardHeader>
+        </TouchableOpacity>
+        {/*! Card Header End */}
 
-            <CardDescription >
-              {item.barcode}
-            </CardDescription>
-          </View>
-
-          <View>
-            {enableActionBtn ? (
-              <>
-                {
-                  !isEditState ? (
-                    <Button
-                      variant={"destructive"}
-                      size={"sm"}
-                      onPress={() => { onDelete(item) }}
-                    >
-                      <Lucide name={"trash"} size={14} color={"#fff"} />
-                    </Button>
-                  ) : (
-                    <Button
-                      variant={"outline"}
-                      className="bg-[#E8F1FC]"
-                      size={"sm"}
-                      onPress={onSubmit}
-                    >
-                      <Lucide name={"save"} color={"#124DA1"} size={14} />
-                    </Button>
-                  )
-                }
-              </>
-            ) : (
-              <ItemQuantityUnit
-                quantity={item.quantity}
-                uom={item.uom}
-                onPress={() => setIsEditState((prev) => !prev)}
-              />
-            )}
-          </View>
-        </CardHeader>
-      </TouchableOpacity>
-      {/*! Card Header End */}
-
-      {isCollapseAble && !isCollapsed && (
-        <>
-          <CardContent className="flex-col gap-2 px-0 py-0">
-            <View className="flex-row items-center">
-              <View className="flex-1">
-                <DetailsRow
-                  library="Lucide"
-                  iconName="hash"
-                  label="item code"
-                  value={item.item_number}
-                />
-              </View>
-              <Button
-                variant={"outline"}
-                className="flex-row items-center gap-1"
-                size={"sm"}
-                onPress={async () => {
-                }}
-              >
-                <Text className="text-muted-foreground">
-                  <Lucide name="copy" color={isDark ? '#fff' : '#000'} />
-                </Text>
-                <Text>Barcode</Text>
-              </Button>
-            </View>
-            <DetailsRow
-              library="Lucide"
-              iconName="file"
-              label="description"
-              value={item.description}
-            />
-          </CardContent>
-          {enableActionBtn && (
-            <>
-              <Separator />
-              <CardFooter className="items-center justify-between px-0">
-                <View className="flex-row items-center gap-2">
-                  <View className="flex-row items-center justify-center w-8 h-8 bg-[#E8F1FC] rounded-md">
-                    <Lucide
-                      name={"layers"}
-                      color={"#124DA1"}
-                      size={20}
-                    />
-                  </View>
-                  <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Quantity
-                  </Text>
-                </View>
-
-                {isEditState ? (
-                  <View>
-                    <Controller
-                      control={form.control}
-                      name="quantity"
-                      render={({ field: { onChange, value } }) => (
-                        <Input
-                          ref={quantityRef}
-                          className="h-8 w-28" // same height & width as badge
-                          returnKeyType="go"
-                          keyboardType="numeric"
-                          onSubmitEditing={onSubmit}
-                          onChangeText={onChange}
-                          value={value.toString()}
-                        />
-                      )}
-                    />
-                  </View>
-                ) : (
-                  <ItemQuantityUnit
-                    quantity={item.quantity}
-                    uom={item.uom}
-                    onPress={() => {
-                      setIsEditState((prev) => !prev);
-                      quantityRef.current?.focus();
-                    }}
+        {isCollapseAble && !isCollapsed && (
+          <>
+            <CardContent className="flex-col gap-2 px-0 py-0">
+              <View className="flex-row items-center">
+                <View className="flex-1">
+                  <DetailsRow
+                    library="Lucide"
+                    iconName="hash"
+                    label="item code"
+                    value={item.item_number}
                   />
-                )}
-              </CardFooter>
-            </>
-          )}
-        </>
-      )}
-    </Card>
+                </View>
+                <Button
+                  variant={"outline"}
+                  className="flex-row items-center gap-1"
+                  size={"sm"}
+                  onPress={async () => {
+                  }}
+                >
+                  <Text className="text-muted-foreground">
+                    <Lucide name="copy" color={isDark ? '#fff' : '#000'} />
+                  </Text>
+                  <Text>Barcode</Text>
+                </Button>
+              </View>
+              <DetailsRow
+                library="Lucide"
+                iconName="file"
+                label="description"
+                value={item.description}
+              />
+            </CardContent>
+            {enableActionBtn && (
+              <>
+                <Separator />
+                <CardFooter className="items-center justify-between px-0">
+                  <View className="flex-row items-center gap-2">
+                    <View className="flex-row items-center justify-center w-8 h-8 bg-[#E8F1FC] rounded-md">
+                      <Lucide
+                        name={"layers"}
+                        color={"#124DA1"}
+                        size={20}
+                      />
+                    </View>
+                    <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      Quantity
+                    </Text>
+                  </View>
+
+                  {isEditState ? (
+                    <View>
+                      <Controller
+                        control={form.control}
+                        name="quantity"
+                        render={({ field: { onChange, value } }) => (
+                          <Input
+                            ref={quantityRef}
+                            className="h-8 w-28" // same height & width as badge
+                            returnKeyType="go"
+                            keyboardType="numeric"
+                            onSubmitEditing={onSubmit}
+                            onChangeText={onChange}
+                            value={value.toString()}
+                          />
+                        )}
+                      />
+                    </View>
+                  ) : (
+                    <ItemQuantityUnit
+                      quantity={item.quantity}
+                      uom={item.uom}
+                      onPress={() => {
+                        setIsEditState((prev) => !prev);
+                        quantityRef.current?.focus();
+                      }}
+                    />
+                  )}
+                </CardFooter>
+              </>
+            )}
+          </>
+        )}
+      </Card>
+    </>
   );
 };
 

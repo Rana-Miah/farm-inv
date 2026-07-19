@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import modalReducer from './slice/modal-slice'
 import alertModalReducer from './slice/alert-modal-slice'
+import alertModalWithPayloadReducer from './slice/alert-modal-with-payload'
 
 export const store = configureStore({
   reducer: {
     modal: modalReducer,
     alertModal: alertModalReducer,
+    alertModalWithPayload: alertModalWithPayloadReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

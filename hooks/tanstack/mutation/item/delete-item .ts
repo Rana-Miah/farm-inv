@@ -1,8 +1,13 @@
 import { MUTATION_KEY } from "@/constants/tanstack-query";
-import { deleteOrderItemsByBarcode } from "@/dal/item/delete-items";
+import { deleteItemById, deleteOrderItemByBarcode } from "@/dal/item/delete-items";
 import { useMutation } from "@tanstack/react-query";
 
 export const useDeleteOrderItem = () => useMutation({
     mutationKey: [MUTATION_KEY.SCANNED_ITEM.UPDATE],
-    mutationFn: (id: string) => deleteOrderItemsByBarcode(id)
+    mutationFn: (barcode: string) => deleteOrderItemByBarcode(barcode)
+})
+
+export const useDeleteItemById = () => useMutation({
+    mutationKey: [MUTATION_KEY.SCANNED_ITEM.UPDATE],
+    mutationFn: (id: string) => deleteItemById(id)
 })

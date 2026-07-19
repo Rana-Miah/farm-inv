@@ -82,15 +82,14 @@ export const OrderItemDetails = ({
         onAlertOpen(ALERT_MODAL_TYPE.ORDER.UPDATE)
     });
 
-    const isUpdateAlert = isAlertOpen && alertType === 'ORDER_UPDATE_ALERT_MODAL'
-    const isDeleteAlert = isAlertOpen && alertType === 'ORDER_DELETE_ALERT_MODAL'
+    const isUpdateAlert = isAlertOpen && alertType === ALERT_MODAL_TYPE.ORDER.UPDATE
+    const isDeleteAlert = isAlertOpen && alertType === ALERT_MODAL_TYPE.ORDER.DELETE
 
 
     const alertTitle = `Sure? Order item ${isUpdateAlert ? "quantity" : ""} will be ${isDeleteAlert ? "deleted" : `updated to ${latestQuantity} ${orderItem.uom}`}!`;
     const alertDescription = isDeleteAlert ?
         orderItem.description :
-        isUpdateAlert ? `${orderItem.description} (Previous Quantity ${orderItem.quantity} ${orderItem.uom})`
-            : ""
+        isUpdateAlert ? `${orderItem.description} (Previous Quantity ${orderItem.quantity} ${orderItem.uom})` : ""
 
     const onConfirm = () => {
         if (isDeleteAlert) {

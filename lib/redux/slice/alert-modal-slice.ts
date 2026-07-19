@@ -1,7 +1,6 @@
 import { AlertModalType } from "@/constants";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-
 export type AlertModalState = {
     isAlertOpen: boolean;
     alertType: AlertModalType | null

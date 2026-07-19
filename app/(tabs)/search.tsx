@@ -1,7 +1,7 @@
 import { View, FlatList } from 'react-native'
 import Container from '@/components/shared/container'
 import { useGetGlobalSearchItems } from '@/hooks/tanstack/mutation/item/get-item'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -15,11 +15,18 @@ import { showSuccess } from '@/lib/toast/success'
 const Search = () => {
     const [searchValue, setSearchValue] = useState('')
     const search = useDebounce(searchValue)
+    const isDark = useColorScheme().colorScheme === 'dark'
+
     const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useGetGlobalSearchItems(search)
 
     const items = data?.pages.flatMap(page => page).filter(item => !!item) ?? []
 
-
+    const renderSearchItemDetailsCard = React.useCallback(
+        ({ index, isDark, item, }: { item: Item, index: number; isDark: boolean }) => (
+            <SearchItemDetailsCard index={index} isDark={isDark} item={item} />
+        ),
+        []
+    )
 
     return (
         <Container>
@@ -37,7 +44,12 @@ const Search = () => {
                         />
 
                         <View className='absolute top-5 right-4'>
-                            <Lucide name='x-circle' size={24} onPress={() => setSearchValue("")} />
+                            <Lucide
+                                name='x-circle'
+                                size={24}
+                                onPress={() => setSearchValue("")}
+                                color={isDark ? "white" : "black"}
+                            />
                         </View>
                     </View>
 
@@ -46,12 +58,7 @@ const Search = () => {
                         showsVerticalScrollIndicator={false}
                         data={items}
                         keyExtractor={item => item.barcode}
-                        renderItem={({ item, index }) => (
-                            <SearchItemDetailsCard
-                                item={item}
-                                index={index}
-                            />
-                        )}
+                        renderItem={({ item, index }) => renderSearchItemDetailsCard({ item, isDark, index })}
                         onEndReached={() => {
                             if (hasNextPage && !isFetchingNextPage) {
                                 fetchNextPage()
@@ -75,76 +82,81 @@ const Search = () => {
 export default Search
 
 
-const SearchItemDetailsCard = ({ item, index }: {
-    item: {
-        barcode: string;
-        item_number: string;
-        description: string;
-        uom: string;
-        packing: number;
-        sales_price: number;
-        vendor: string;
-        vendor_code: string;
-        promo: "P" | "R" | null;
-        cat3: string;
-        cat4: string;
-    }; index: number
-}) => {
-    const [isCopied, setIsCopied] = useState(false)
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsCopied(false)
-        }, 3000);
-
-        return () => clearTimeout(timer)
-    }, [isCopied])
-
-    const isDark = useColorScheme().colorScheme === 'dark'
-
-    const onCopy = async (barcode: string) => {
-        await Clipboard.setStringAsync(barcode);
-        showSuccess(`Barcode ${barcode} copied!`)
-        setIsCopied(true)
-    }
-
-    return (
-        <Card className='p-1 gap-1 mb-2'>
-            <CardHeader className='p-1'>
-                <CardTitle>Search Item {index + 1}</CardTitle>
-                <CardDescription>Item details</CardDescription>
-            </CardHeader>
-            <CardContent className='p-1 gap-1'>
-                <View className=" flex-row items-center justify-between">
-                    <View className="flex-[1]">
-                        <DetailsRow
-                            library='Lucide'
-                            iconName='barcode'
-                            label='Barcode'
-                            value={item.barcode}
-                        />
-                    </View>
-                    <Button size={'sm'} onPress={() => onCopy(item.barcode)}>
-                        <View className="flex-row item-center justify-center gap-1 text-sm">
-                            <Lucide name='copy' size={14} color={isDark ? 'black' : 'white'} />
-                            <Text>{isCopied ? 'Copied' : 'Copy'}</Text>
-                        </View>
-
-                    </Button>
-
-                </View>
-                <DetailsRow
-                    library='Lucide'
-                    iconName='hash'
-                    label='Item Code'
-                    value={item.item_number}
-                />
-                <DetailsRow
-                    library='Lucide'
-                    iconName='file-text'
-                    label='Description'
-                    value={item.description}
-                />
-            </CardContent>
-        </Card>
-    )
+type Item = {
+    barcode: string;
+    item_number: string;
+    description: string;
+    uom: string;
+    packing: number;
+    sales_price: number;
+    vendor: string;
+    vendor_code: string;
+    promo: "P" | "R" | null;
+    cat3: string;
+    cat4: string;
 }
+
+const SearchItemDetailsCard = React.memo(
+    ({ item, index, isDark }: {
+        item: Item;
+        index: number;
+        isDark: boolean;
+    }) => {
+        const [isCopied, setIsCopied] = useState(false)
+        useEffect(() => {
+            const timer = setTimeout(() => {
+                setIsCopied(false)
+            }, 3000);
+
+            return () => clearTimeout(timer)
+        }, [isCopied])
+
+
+        const onCopy = async (barcode: string) => {
+            await Clipboard.setStringAsync(barcode);
+            showSuccess(`Barcode ${barcode} copied!`)
+            setIsCopied(true)
+        }
+
+        return (
+            <Card className='p-1 gap-1 mb-2'>
+                <CardHeader className='p-1'>
+                    <CardTitle>Search Item {index + 1}</CardTitle>
+                    <CardDescription>Item details</CardDescription>
+                </CardHeader>
+                <CardContent className='p-1 gap-1'>
+                    <View className=" flex-row items-center justify-between">
+                        <View className="flex-[1]">
+                            <DetailsRow
+                                library='Lucide'
+                                iconName='barcode'
+                                label='Barcode'
+                                value={item.barcode}
+                            />
+                        </View>
+                        <Button size={'sm'} onPress={() => onCopy(item.barcode)}>
+                            <View className="flex-row item-center justify-center gap-1 text-sm">
+                                <Lucide name='copy' size={14} color={isDark ? 'black' : 'white'} />
+                                <Text>{isCopied ? 'Copied' : 'Copy'}</Text>
+                            </View>
+
+                        </Button>
+
+                    </View>
+                    <DetailsRow
+                        library='Lucide'
+                        iconName='hash'
+                        label='Item Code'
+                        value={item.item_number}
+                    />
+                    <DetailsRow
+                        library='Lucide'
+                        iconName='file-text'
+                        label='Description'
+                        value={item.description}
+                    />
+                </CardContent>
+            </Card>
+        )
+    }
+)
