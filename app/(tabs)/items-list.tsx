@@ -16,14 +16,16 @@ import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import ScannedItemCard from '@/components/shared/scanned-item-card'
 import { Input } from '@/components/ui/input'
-import { useGetScannedItems } from '@/hooks/tanstack/mutation/item/get-item'
+import { useGetScannedItems, useGetStoredScannedItemsSearch } from '@/hooks/tanstack/mutation/item/get-item'
 
 const ItemsList = () => {
     const { data: employees } = useEmployeesGetQuery()
     const { data: label } = useLabelingGetQuery()
     const [inputValue, setInputValue] = useState({ search: "", title: "" })
-    const { data, isPending, isLoading, isFetching, isFetched } = useGetScannedItems()
+    const { data: items, isPending, isLoading, isFetching, isFetched } = useGetScannedItems()
+    const { data: searchItems } = useGetStoredScannedItemsSearch(inputValue.search)
 
+    const data = inputValue.search.length > 0 ? searchItems?.data : items?.data?.scannedItems
 
     return (
         <Container>
@@ -53,7 +55,7 @@ const ItemsList = () => {
                     <FlatList
                         className="pb-0 flex-1"
                         showsVerticalScrollIndicator={false}
-                        data={[]}
+                        data={data ?? []}
                         renderItem={({ item, index }) => (
                             <ScannedItemCard
                                 key={''}

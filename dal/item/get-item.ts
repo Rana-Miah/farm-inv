@@ -2,6 +2,7 @@ import { farmDb } from "@/drizzle/db/farm-db"
 import { inventoryDb } from "@/drizzle/db/inventory-db"
 import { itemMasterTable } from "@/drizzle/schema/farm-schema"
 import { inventoryTable } from "@/drizzle/schema/inventory"
+import { storeData } from "@/lib/async-storage"
 import { failureResponse, successResponse } from "@/lib/response"
 import { AddItemFormValue } from "@/lib/zod/add-item-form-schema"
 import { and, asc, desc, eq, like, or, sql } from "drizzle-orm"
@@ -112,39 +113,31 @@ export const getItemPriceCheckByBarcode = async (barcode: string) => {
 
 
 
-export const getStoredScannedItems = async (query?: string) => {
-    const storeScannedItemsQuery = inventoryDb
-        .select()
-        .from(inventoryTable)
+export const getSearchItems = async (query?: string) => {
+    try {
+        const storeScannedItemsQuery = inventoryDb
+            .select()
+            .from(inventoryTable)
 
-    if (query) {
-        const words = query.trim().toLowerCase().split(/\s+/);
+        if (query) {
+            const words = query.trim().toLowerCase().split(/\s+/);
 
-        storeScannedItemsQuery.where(
-            or(
-                like(inventoryTable.barcode, `%${query}%`),
-                like(inventoryTable.item_number, `%${query}%`),
-                ...words.map((word) => like(inventoryTable.description, `%${word}%`)),
-            ),
+            storeScannedItemsQuery.where(
+                or(
+                    like(inventoryTable.barcode, `%${query}%`),
+                    like(inventoryTable.item_number, `%${query}%`),
+                    ...words.map((word) => like(inventoryTable.description, `%${word}%`)),
+                ),
+            );
+        }
+
+        const storedData = await storeScannedItemsQuery.orderBy(
+            desc(inventoryTable.createdAt),
         );
+
+        return successResponse(storedData, 'Items retrieved!')
+    } catch (error) {
+
     }
 
-    const storedScannedItems = await storeScannedItemsQuery.orderBy(
-        desc(inventoryTable.createdAt),
-    );
-
-    return storedScannedItems.map(
-        ({ barcode, stored_scanned_item, item, unit }) => {
-            return {
-                storedId: stored_scanned_item.id,
-                quantity: stored_scanned_item.quantity,
-                barcode: barcode?.barcode,
-                item_code: item?.item_code,
-                description: item?.item_description,
-                unitName: unit?.unitName,
-                unitPacking: unit?.packing,
-                scanFor: stored_scanned_item.scanFor,
-            };
-        },
-    );
 };
