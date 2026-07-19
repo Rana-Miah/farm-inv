@@ -26,9 +26,9 @@ const Search = () => {
             <View className="flex-1 gap-1">
 
                 <View className='flex-1'>
-                    <View className="h-16 py-2 bg-red-300">
+                    <View className="h-16 py-2">
                         <Input
-                            className="flex-1 relative"
+                            className="flex-1 relative pr-12"
                             placeholder="Search"
                             onChangeText={(text) => {
                                 setSearchValue(text)
@@ -36,8 +36,8 @@ const Search = () => {
                             value={searchValue}
                         />
 
-                        <View className='absolute top-1 right-0'>
-                            <Lucide name='x-circle' size={24} />
+                        <View className='absolute top-5 right-4'>
+                            <Lucide name='x-circle' size={24} onPress={() => setSearchValue("")} />
                         </View>
                     </View>
 
@@ -124,8 +124,8 @@ const SearchItemDetailsCard = ({ item, index }: {
                         />
                     </View>
                     <Button size={'sm'} onPress={() => onCopy(item.barcode)}>
-                        <View className="flex-row item-center justify-center gap-1">
-                            <Lucide name='copy' size={16} color={isDark ? 'black' : 'white'} />
+                        <View className="flex-row item-center justify-center gap-1 text-sm">
+                            <Lucide name='copy' size={14} color={isDark ? 'black' : 'white'} />
                             <Text>{isCopied ? 'Copied' : 'Copy'}</Text>
                         </View>
 
