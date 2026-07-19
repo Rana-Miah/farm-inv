@@ -33,8 +33,8 @@ const EmployeeCreateForm = () => {
 
     const onSubmitHandler = form.handleSubmit(values => {
         createEmployee(values, {
-            onSuccess() {
-                queryClient.invalidateQueries({ queryKey: [MUTATION_KEY.EMPLOYEE.READ] })
+            async onSuccess() {
+                await queryClient.invalidateQueries({ queryKey: [MUTATION_KEY.EMPLOYEE.READ] })
                 // form.reset()
                 // onClose()
             }

@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import Container from '@/components/shared/container'
 import { useState } from "react"
 import { SettingsTab } from "@/constants/type"
@@ -17,14 +17,17 @@ const Settings = () => {
             <Tabs
                 value={activeTab}
                 onValueChange={(v) => setActiveTab(v as SettingsTab)}
-                className="flex-1 py-3"
+                className="flex-1 py-1"
             >
-                <TabsContent value={APP_SETTINGS_TAB}>
-                    <AppSettings />
-                </TabsContent>
-                <TabsContent value={USER_SETTINGS_TAB}>
-                    <EmployeeSettings />
-                </TabsContent>
+                <ScrollView>
+
+                    <TabsContent value={APP_SETTINGS_TAB}>
+                        <AppSettings />
+                    </TabsContent>
+                    <TabsContent value={USER_SETTINGS_TAB}>
+                        <EmployeeSettings />
+                    </TabsContent>
+                </ScrollView>
 
                 <TabsList className="w-full justify-around mt-auto">
                     {

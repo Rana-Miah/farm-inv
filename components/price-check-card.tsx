@@ -75,20 +75,24 @@ export function PriceCheckCard({
                     {/* BARCODE */}
                     <DetailsRow
                         // icon={{ library: 'FontAwesome', name: "barcode" }}
+                        library="Lucide"
+                        iconName="barcode"
                         label="barcode"
                         value={barcode}
                     />
 
                     {/* ITEM CODE */}
                     <DetailsRow
-                        // icon={{ library: 'FontAwesome', name: "hashtag" }}
+                        library="Lucide"
+                        iconName="hash"
                         label="item code"
                         value={item_number}
                     />
 
                     {/* DESCRIPTION */}
                     <DetailsRow
-                        // icon={{ library: 'FontAwesome', name: "file-text" }}
+                        library="Lucide"
+                        iconName="file-text"
                         label="Description"
                         value={description}
                     />
@@ -102,7 +106,7 @@ export function PriceCheckCard({
                         <FontAwesome6 name="truck" size={16} color="#6b7280" iconStyle="solid" />
 
                         <View className="ml-2 flex-1">
-                            <View className="flex-row items-center justify-between">
+                            <View className="flex-row items-start justify-between">
 
                                 <Text className="text-xs font-medium uppercase text-muted-foreground">
                                     Supplier

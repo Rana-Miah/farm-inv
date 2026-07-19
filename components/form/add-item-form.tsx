@@ -99,7 +99,7 @@ export default function AddItemForm() {
   const onSubmit = handleSubmit((value) => {
 
     insertScannedItem(value, {
-      onSuccess({ data, success, message }) {
+      async onSuccess({ data, success, message }) {
         showDynamicToast(success, message)
         if (success) {
           handleResetForm();
@@ -107,7 +107,7 @@ export default function AddItemForm() {
           // OK
           barcodeInputRef.current?.focus();
           console.log('barcode focused from onSubmit')
-          queryClient.invalidateQueries({
+          await queryClient.invalidateQueries({
             queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
           })
         }
@@ -404,12 +404,12 @@ export default function AddItemForm() {
               orderItem={itemDetails.data.orderItem}
               onDelete={(item) => {
                 deleteOrderItemByBarcode(item.barcode, {
-                  onSuccess(data) {
+                  async onSuccess(data) {
                     if (data.success) {
                       onAlertClose()
                       form.reset()
                       resetGetItem()
-                      queryClient.invalidateQueries({
+                      await queryClient.invalidateQueries({
                         queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
                       })
                     }
@@ -420,12 +420,12 @@ export default function AddItemForm() {
                 updateOrderItemByBarcode(
                   { barcode: item.barcode, quantity },
                   {
-                    onSuccess(data) {
+                    async onSuccess(data) {
                       if (data.success) {
                         onAlertClose()
                         form.reset()
                         resetGetItem()
-                        queryClient.invalidateQueries({
+                        await queryClient.invalidateQueries({
                           queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
                         })
                       }

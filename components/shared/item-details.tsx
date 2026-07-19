@@ -50,24 +50,18 @@ export const ItemDetails = ({
                 </CardHeader>
 
                 <CardContent className="flex-col gap-2 px-0 py-0">
-                    <View className="flex-row justify-between items-center gap-1">
-                        <View className="flex-1">
-                            <DetailsRow
-                                library="Lucide"
-                                iconName="barcode"
-                                label="Barcode"
-                                value={item.barcode}
-                            />
-                        </View>
-                        <View className="flex-1">
-                            <DetailsRow
-                                library="Lucide"
-                                iconName="hash"
-                                label="Item Code"
-                                value={item.item_number}
-                            />
-                        </View>
-                    </View>
+                    <DetailsRow
+                        library="Lucide"
+                        iconName="barcode"
+                        label="Barcode"
+                        value={item.barcode}
+                    />
+                    <DetailsRow
+                        library="Lucide"
+                        iconName="hash"
+                        label="Item Code"
+                        value={item.item_number}
+                    />
                     <DetailsRow
                         library="Lucide"
                         iconName="file-text"

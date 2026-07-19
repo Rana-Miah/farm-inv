@@ -1,3 +1,5 @@
+import { queryClient } from "@/components/provider/tanstack-query-client"
+import { MUTATION_KEY } from "@/constants/tanstack-query"
 import { inventoryDb } from "@/drizzle/db/inventory-db"
 import { inventoryTable } from "@/drizzle/schema/inventory"
 import { failureResponse, successResponse } from "@/lib/response"
@@ -6,6 +8,9 @@ import { and, eq } from "drizzle-orm"
 export const deleteScannedItems = async () => {
     try {
         const scannedItems = await inventoryDb.delete(inventoryTable)
+        await queryClient.invalidateQueries({
+            queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
+        })
 
     } catch (error) {
 
