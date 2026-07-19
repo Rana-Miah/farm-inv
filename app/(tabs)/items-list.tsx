@@ -16,16 +16,27 @@ import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import ScannedItemCard from '@/components/shared/scanned-item-card'
 import { Input } from '@/components/ui/input'
+import { useGetScannedItems, useGetStoredScannedItemsSearch } from '@/hooks/tanstack/mutation/item/get-item'
 
 const ItemsList = () => {
     const { data: employees } = useEmployeesGetQuery()
     const { data: label } = useLabelingGetQuery()
     const [inputValue, setInputValue] = useState({ search: "", title: "" })
+    const { data: items, } = useGetScannedItems()
+    const { data: searchItems } = useGetStoredScannedItemsSearch(inputValue.search)
+
+    const allItems = (inputValue.search.length > 0 ? searchItems?.data : items?.data?.scannedItems)
+
+    const data = allItems ? allItems : []
+
+
+
+    // console.log({ items, searchItems, data })
 
     return (
         <Container>
             <View className='flex-1 justify-between py-2'>
-                <View >
+                <View className='flex-1'>
                     {/* Inventory Save Form */}
                     <View className="h-20 gap-2">
                         <Input
@@ -50,21 +61,25 @@ const ItemsList = () => {
                     <FlatList
                         className="pb-0 flex-1"
                         showsVerticalScrollIndicator={false}
-                        data={[]}
+                        data={data}
                         renderItem={({ item, index }) => (
                             <ScannedItemCard
-                                key={''}
+                                key={item.id}
                                 item={item}
                                 enableActionBtn
                                 isCollapseAble
                                 defaultCollapse={index !== 0}
                                 onDelete={(item) => {
+
+                                    console.log(item.description)
                                     // dispatch(onOpen("item-list-delete"));
                                     // setActionState({ type: "delete", item });
                                 }}
                                 onUpdate={(item) => {
                                     // dispatch(onOpen("item-list-update"));
                                     // setActionState({ type: "update", item });
+                                    console.log(item.description)
+
                                 }}
                             />
                         )}
@@ -72,7 +87,7 @@ const ItemsList = () => {
                 </View>
 
                 {/* below buttons */}
-                <View className='bg-background flex-row justify-between items-center gap-1 rounded-md p-1 shadow-sm shadow-black/5'>
+                <View className='bg-background flex-row justify-between items-center  rounded-md p-1 shadow-sm shadow-black/5'>
                     {/* INVENTORY */}
                     <Inventory invLabels={label?.invLabels ?? []} />
                     {/* TAGS */}
@@ -116,7 +131,7 @@ const Inventory = ({ invLabels }: {
             <View className="flex-row">
                 <Button
                     onPress={() => saveFile('Tags')}
-                    className='rounded-r-none h-8 pr-0'
+                    className='rounded-r-none h-8 pr-1.5'
                     size={'sm'}
                 >
                     <Text>Inv</Text>
@@ -180,7 +195,7 @@ const Order = ({ orderLabels }: {
             <View className="flex-row">
                 <Button
                     onPress={() => saveOrder()}
-                    className='rounded-r-none h-8 pr-0'
+                    className='rounded-r-none h-8 pr-1.5'
                     size={'sm'}
                 >
                     <Text>Order</Text>
@@ -246,7 +261,7 @@ const Tag = ({ employees }: {
             <View className="flex-row">
                 <Button
                     onPress={() => saveFile('Tags')}
-                    className='rounded-r-none h-8 pr-0'
+                    className='rounded-r-none h-8 pr-1.5'
                     size={'sm'}
                 >
                     <Text>Tags</Text>

@@ -1,7 +1,8 @@
+import { PAGE_SIZE } from "@/constants"
 import { MUTATION_KEY } from "@/constants/tanstack-query"
-import { getItemByBarcode, getItemPriceCheckByBarcode, getScannedItems } from "@/dal/item/get-item"
+import { getGlobalSearchItems, getItemByBarcode, getItemPriceCheckByBarcode, getScannedItems, getSearchItems } from "@/dal/item/get-item"
 import { AddItemFormValue } from "@/lib/zod/add-item-form-schema"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useGetItemByBarcode = () => {
     return useMutation({
@@ -22,3 +23,34 @@ export const useGetScannedItems = () => useQuery({
     queryFn: getScannedItems,
     networkMode: 'offlineFirst'
 })
+
+
+export const useGetGlobalSearchItems = (search: string) => useInfiniteQuery(
+    {
+        queryKey: [MUTATION_KEY["GLOBAL-QUERY"].READ, search],
+        queryFn: ({ pageParam }) => {
+            console.log({ pageParam })
+            return getGlobalSearchItems({
+                limit: PAGE_SIZE,
+                offset: pageParam,
+                query: search
+            })
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            if (!lastPage) return undefined
+            if (lastPage.length < PAGE_SIZE) return undefined
+            return allPages.length * PAGE_SIZE
+        },
+        enabled: search.trim().length > 0
+    })
+
+
+export const useGetStoredScannedItemsSearch = (search: string) => {
+    const queryKey = [MUTATION_KEY.SCANNED_ITEM.READ, search];
+    return useQuery({
+        queryKey,
+        queryFn: () => getSearchItems(search),
+        enabled: search.length > 0,
+    });
+};

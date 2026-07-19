@@ -4,7 +4,7 @@ import { SafeAreaView, Edge } from 'react-native-safe-area-context'
 
 const Container = ({ children, edges }: { children: React.ReactNode, edges?: Edge[] }) => {
     return (
-        <SafeAreaView edges={edges} className='flex-1 px-4'>
+        <SafeAreaView edges={edges} className='flex-1 px-1.5'>
             {children}
         </SafeAreaView>
     )

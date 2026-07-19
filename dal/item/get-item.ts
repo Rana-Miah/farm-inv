@@ -2,9 +2,11 @@ import { farmDb } from "@/drizzle/db/farm-db"
 import { inventoryDb } from "@/drizzle/db/inventory-db"
 import { itemMasterTable } from "@/drizzle/schema/farm-schema"
 import { inventoryTable } from "@/drizzle/schema/inventory"
+import { inventoryTable as farmInventoryTable } from "@/drizzle/schema/farm-schema"
+import { storeData } from "@/lib/async-storage"
 import { failureResponse, successResponse } from "@/lib/response"
 import { AddItemFormValue } from "@/lib/zod/add-item-form-schema"
-import { and, asc, desc, eq, sql } from "drizzle-orm"
+import { and, asc, desc, eq, like, or, sql } from "drizzle-orm"
 
 export const getItemByBarcode = async ({ barcode, scanType, isAdvanceMode }: Pick<AddItemFormValue, 'scanType' | 'isAdvanceMode' | 'barcode'>) => {
     try {
@@ -109,3 +111,61 @@ export const getItemPriceCheckByBarcode = async (barcode: string) => {
         return failureResponse('Failed to check item price!')
     }
 }
+
+
+
+export const getSearchItems = async (query?: string) => {
+    try {
+        const storeScannedItemsQuery = inventoryDb
+            .select()
+            .from(inventoryTable)
+
+        if (query) {
+            const words = query.trim().toLowerCase().split(/\s+/);
+
+            storeScannedItemsQuery.where(
+                or(
+                    like(inventoryTable.barcode, `%${query}%`),
+                    like(inventoryTable.item_number, `%${query}%`),
+                    ...words.map((word) => like(inventoryTable.description, `%${word}%`)),
+                ),
+            );
+        }
+
+        const storedData = await storeScannedItemsQuery.orderBy(
+            desc(inventoryTable.createdAt),
+        );
+
+        return successResponse(storedData, 'Items retrieved!')
+    } catch (error) {
+        return failureResponse('Failed to get search data')
+    }
+
+};
+
+
+export const getGlobalSearchItems = async ({ limit, offset, query }: { query: string; limit: number; offset: number }) => {
+    try {
+        const words = query.trim().toLowerCase().split(/\s+/);
+
+
+        const storeScannedItemsQuery = farmDb
+            .select()
+            .from(itemMasterTable)
+            .where(
+                or(
+                    like(itemMasterTable.barcode, `%${query}%`),
+                    like(itemMasterTable.item_number, `%${query}%`),
+                    ...words.map((word) => like(itemMasterTable.description, `%${word}%`)),
+                ),
+            )
+            .limit(limit)
+            .offset(offset)
+
+        const data = await storeScannedItemsQuery
+        return data
+    } catch (error) {
+        return null
+    }
+
+};
