@@ -24,13 +24,6 @@ export const useGetScannedItems = () => useQuery({
     networkMode: 'offlineFirst'
 })
 
-type GlobalSearchParams = {
-    search: string;
-    limit: number;
-    offset: number;
-}
-
-
 
 export const useGetGlobalSearchItems = (search: string) => useInfiniteQuery(
     {
@@ -45,9 +38,6 @@ export const useGetGlobalSearchItems = (search: string) => useInfiniteQuery(
         },
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
-
-            console.log({ allPages, lastPage })
-
             if (!lastPage) return undefined
             if (lastPage.length < PAGE_SIZE) return undefined
             return allPages.length * PAGE_SIZE
