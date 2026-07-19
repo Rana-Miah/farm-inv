@@ -62,27 +62,27 @@ const ItemsList = () => {
                         className="pb-0 flex-1"
                         showsVerticalScrollIndicator={false}
                         data={data}
-                        renderItem={({ item, index }) => {
-                            console.log({ item })
+                        renderItem={({ item, index }) => (
+                            <ScannedItemCard
+                                key={item.id}
+                                item={item}
+                                enableActionBtn
+                                isCollapseAble
+                                defaultCollapse={index !== 0}
+                                onDelete={(item) => {
 
-                            return (
-                                <ScannedItemCard
-                                    key={item.id}
-                                    item={item}
-                                    enableActionBtn
-                                    isCollapseAble
-                                    defaultCollapse={index !== 0}
-                                    onDelete={(item) => {
-                                        // dispatch(onOpen("item-list-delete"));
-                                        // setActionState({ type: "delete", item });
-                                    }}
-                                    onUpdate={(item) => {
-                                        // dispatch(onOpen("item-list-update"));
-                                        // setActionState({ type: "update", item });
-                                    }}
-                                />
-                            )
-                        }}
+                                    console.log(item.description)
+                                    // dispatch(onOpen("item-list-delete"));
+                                    // setActionState({ type: "delete", item });
+                                }}
+                                onUpdate={(item) => {
+                                    // dispatch(onOpen("item-list-update"));
+                                    // setActionState({ type: "update", item });
+                                    console.log(item.description)
+
+                                }}
+                            />
+                        )}
                     />
                 </View>
 

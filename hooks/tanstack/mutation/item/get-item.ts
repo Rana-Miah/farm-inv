@@ -1,5 +1,5 @@
 import { MUTATION_KEY } from "@/constants/tanstack-query"
-import { getItemByBarcode, getItemPriceCheckByBarcode, getScannedItems, getSearchItems } from "@/dal/item/get-item"
+import { getGlobalSearchItems, getItemByBarcode, getItemPriceCheckByBarcode, getScannedItems, getSearchItems } from "@/dal/item/get-item"
 import { AddItemFormValue } from "@/lib/zod/add-item-form-schema"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -21,6 +21,11 @@ export const useGetScannedItems = () => useQuery({
     queryKey: [MUTATION_KEY.SCANNED_ITEM.READ],
     queryFn: getScannedItems,
     networkMode: 'offlineFirst'
+})
+
+export const useGetGlobalSearchItems = (search: string) => useQuery({
+    queryKey: [MUTATION_KEY.SCANNED_ITEM.READ],
+    queryFn: () => getGlobalSearchItems(search),
 })
 
 

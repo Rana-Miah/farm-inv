@@ -137,7 +137,35 @@ export const getSearchItems = async (query?: string) => {
 
         return successResponse(storedData, 'Items retrieved!')
     } catch (error) {
+        return failureResponse('Failed to get search data')
+    }
 
+};
+
+
+export const getGlobalSearchItems = async (query: string) => {
+    try {
+        const storeScannedItemsQuery = farmDb
+            .select()
+            .from(itemMasterTable)
+
+        if (query) {
+            const words = query.trim().toLowerCase().split(/\s+/);
+
+            storeScannedItemsQuery.where(
+                or(
+                    like(inventoryTable.barcode, `%${query}%`),
+                    like(inventoryTable.item_number, `%${query}%`),
+                    ...words.map((word) => like(inventoryTable.description, `%${word}%`)),
+                ),
+            );
+        }
+
+        const storedData = await storeScannedItemsQuery
+
+        return successResponse(storedData, 'Items retrieved!')
+    } catch (error) {
+        return failureResponse('Failed to get search data')
     }
 
 };
