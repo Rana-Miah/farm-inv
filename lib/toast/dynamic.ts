@@ -5,6 +5,6 @@ export const showDynamicToast = (success: boolean, msg1: string, msg2?: string) 
         type: success ? 'success' : 'error',
         text1: msg1,
         text2: msg2,
-        visibilityTime: 1000
+        visibilityTime: 1500
     })
 }

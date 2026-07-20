@@ -15,6 +15,18 @@ export const valueIsItemCode = (code: string) => ITEM_CODE_REGEX.test(code);
 export const SCAN_FLAG = ["Inventory", "Tags", "Order"] as const;
 export const SAVE_FLAG = ["Inventory", "Order"] as const;
 
+export type ScanFlag = typeof SCAN_FLAG[number]
+
+export type ScanFlagMap = {
+    [Flag in ScanFlag]: `${Flag}`
+}
+
+export const SCAN_FLAG_TYPE: ScanFlagMap = {
+    Inventory: 'Inventory',
+    Order: 'Order',
+    Tags: 'Tags'
+}
+
 export const PAGE_SIZE = 50
 
 

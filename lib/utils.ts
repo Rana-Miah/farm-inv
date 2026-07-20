@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from 'clsx';
-import Toast from 'react-native-toast-message';
 import { twMerge } from 'tailwind-merge';
+import * as Clipboard from 'expo-clipboard'
+import { showError } from './toast/error';
+import { showSuccess } from './toast/success';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -29,6 +31,13 @@ export const saveOrder = (name: string = 'order') => {
   console.log({ name, fileName })
 }
 
-
+export const copy = async (text: string) => {
+  try {
+    await Clipboard.setStringAsync(text)
+    showSuccess('Copied!')
+  } catch (error) {
+    showError('Failed to copy!')
+  }
+}
 
 

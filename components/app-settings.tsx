@@ -10,9 +10,9 @@ import { filePicker } from '@/lib/expo-file-system/file-picker'
 import { ensureDbDir } from '@/lib/expo-file-system/directory-picker'
 import CardWrapper from './shared/card-wrapper'
 import { File } from 'expo-file-system'
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6'
 import { useColorScheme } from 'nativewind'
 import { Card } from './ui/card'
+import Lucide from '@react-native-vector-icons/lucide'
 
 const AppSettings = () => {
     // const permission = usePermission()
@@ -61,7 +61,7 @@ const AppSettings = () => {
                             size={'sm'}
                         // onPress={test}
                         >
-                            <FontAwesome6 name='file-import' iconStyle='solid' color={color} />
+                            <Lucide name='file-input' color={color} />
                             <Text>Import DB</Text>
                         </Button>
                         <Text className='font-semibold'>Last Updated : Today</Text>
@@ -82,7 +82,7 @@ const AppSettings = () => {
                         variant={'destructive'}
                         onPress={test}
                     >
-                        <FontAwesome6 name='trash-can' iconStyle='solid' color={color} />
+                        <Lucide name='trash' color={color} />
                         <Text>Clear Inventory</Text>
                     </Button>
                 </View>
@@ -109,8 +109,8 @@ const HeaderContent = () => {
     const color = colorScheme === 'dark' ? "black" : 'white'
     return (
         <Button size={'sm'}>
-            <FontAwesome6 name='download' iconStyle='solid' color={color} />
-            <Text>Download DB</Text>
+            <Lucide name='download' color={color} />
+            <Text>Database</Text>
         </Button>
     )
 }

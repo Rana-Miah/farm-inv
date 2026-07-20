@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { cn, copy } from "@/lib/utils"
 import { Text, View } from "react-native"
 import { DetailsRow } from "@/components/shared/details-row"
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6"
@@ -116,7 +116,7 @@ export function PriceCheckCard({
                                     className="ml-2 flex-row items-center rounded-md px-2.5 py-1"
                                 >
                                     <FontAwesome6 name="tag" size={12} color="#6b7280" iconStyle="solid" />
-                                    <Text className="ml-1 font-mono text-xs font-semibold">
+                                    <Text className="ml-1 font-mono text-xs font-semibold" onPress={() => copy(vendor_code)}>
                                         {vendor_code}
                                     </Text>
                                 </Badge>

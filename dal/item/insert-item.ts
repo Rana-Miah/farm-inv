@@ -52,3 +52,34 @@ export const insertScannedItem = async (formValue: AddItemFormValue) => {
         return failureResponse('Failed to add scanned item!')
     }
 }
+
+
+
+export const insertPriceCheckerTag = async (barcode: string) => {
+    try {
+        const trimmedBarcode = barcode.trim()
+        if (!trimmedBarcode) return failureResponse('Please enter the barcode!')
+
+        const [existItem] = await farmDb.select().from(itemMasterTable).where(
+            eq(itemMasterTable.barcode, trimmedBarcode)
+        )
+
+        if (!existItem) return failureResponse('Item not found!')
+
+
+        const newAdded = await inventoryDb.insert(inventoryTable).values({
+            uom: existItem.uom,
+            description: existItem.description,
+            barcode: existItem.barcode,
+            item_number: existItem.item_number,
+            packing: existItem.packing,
+            quantity: 1,
+            scanFlag: 'Tags'
+        }).returning()
+        return successResponse(newAdded, 'Shelf tag added!')
+
+    } catch (error) {
+        console.log(error)
+        return failureResponse('Failed to add scanned item!')
+    }
+}

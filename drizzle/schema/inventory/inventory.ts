@@ -4,6 +4,8 @@ import { v4 as uuid } from 'uuid'
 
 import { createdAt, updatedAt, SAVE_FLAG, SCAN_FLAG } from '@/drizzle/schema-helper'
 
+
+//TODO : need new col called pflag -> 'P' | 'R' | null
 export const inventoryTable = sqliteTable('inventory', {
     id: text('id').notNull().primaryKey().unique().$defaultFn(() => uuid()),
     barcode: text('barcode').notNull(),

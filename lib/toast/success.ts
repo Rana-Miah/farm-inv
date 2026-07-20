@@ -4,6 +4,6 @@ export const showSuccess = (msg: string) => {
     Toast.show({
         type: 'success',
         text1: msg,
-        visibilityTime: 1000
+        visibilityTime: 1500
     })
 }

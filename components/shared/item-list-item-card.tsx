@@ -61,6 +61,7 @@ const ScannedItemCard = ({
         },
     });
 
+
     const onSubmit = form.handleSubmit((params) => {
         if (!!onUpdate && item.quantity !== params.quantity) {
             onUpdate({

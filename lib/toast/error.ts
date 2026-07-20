@@ -4,6 +4,6 @@ export const showError = (msg: string) => {
     Toast.show({
         type: 'error',
         text1: msg,
-        visibilityTime: 1000
+        visibilityTime: 1500
     })
 }

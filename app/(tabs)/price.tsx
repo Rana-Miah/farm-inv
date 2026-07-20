@@ -9,6 +9,9 @@ import { showDynamicToast } from "@/lib/toast/dynamic";
 import Lucide from "@react-native-vector-icons/lucide";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { useTagInsertMutation } from "@/hooks/tanstack/mutation/item/insert-item";
+import { queryClient } from "@/components/provider/tanstack-query-client";
+import { MUTATION_KEY } from "@/constants/tanstack-query";
 
 const Price = () => {
     const barcodeInputRef = useRef<any>(null);
@@ -17,6 +20,9 @@ const Price = () => {
     });
 
     const { mutate: checkItemPrice, data: item, reset: resetCheckItemMutation } = useCheckItemPrice()
+    const { mutate: insertTag, } = useTagInsertMutation()
+
+    const barcode = form.getValues('barcode')
 
     const onSubmit = form.handleSubmit(({ barcode }) => {
         checkItemPrice(barcode, {
@@ -28,6 +34,22 @@ const Price = () => {
             }
         })
     });
+
+    const onTagRequest = () => {
+        insertTag(barcode, {
+            onSuccess({ success, message }) {
+                if (success) {
+                    form.reset()
+                    resetCheckItemMutation()
+                    showDynamicToast(success, message)
+                    queryClient.invalidateQueries({
+                        queryKey: [MUTATION_KEY.SCANNED_ITEM.READ]
+                    })
+                }
+            }
+        })
+    }
+
 
     return (
         <Container>
@@ -67,7 +89,7 @@ const Price = () => {
                     />
                 </View>
                 <Button
-
+                    onPress={onTagRequest}
                 >
                     <Text >
                         <Lucide name="plus" color={'white'} size={16} />

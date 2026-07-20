@@ -1,11 +1,10 @@
-import { FlatList, View, } from 'react-native'
+import { FlatList, TouchableOpacity, View, } from 'react-native'
 import Container from '@/components/shared/container'
 import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useColorScheme } from 'nativewind'
-import { ALERT_MODAL_TYPE, MODAL_TYPE, } from '@/constants'
+import { ALERT_MODAL_TYPE, MODAL_TYPE, SCAN_FLAG_TYPE, SCAN_TYPE_KEY, ScanFlag, } from '@/constants'
 import { saveOrder } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { saveFile } from '@/lib/expo-file-system/save-file'
@@ -26,6 +25,7 @@ import { queryClient } from '@/components/provider/tanstack-query-client'
 import { MUTATION_KEY } from '@/constants/tanstack-query'
 import { useUpdateItemById } from '@/hooks/tanstack/mutation/item/update-item'
 import { showError } from '@/lib/toast/error'
+import Lucide from '@react-native-vector-icons/lucide'
 
 const ItemsList = () => {
     const { data: employees } = useEmployeesGetQuery()
@@ -115,28 +115,56 @@ const ItemsList = () => {
             <View className='flex-1 justify-between py-2'>
                 <View className='flex-1'>
                     {/* Inventory Save Form */}
-                    <View className="h-20 gap-2">
-                        <Input
-                            className="flex-1"
-                            placeholder="Item Title"
-                            onChangeText={(text) => {
-                                setInputValue(prev => ({ ...prev, title: text }))
-                            }}
-                            value={inputValue.title}
-                        />
-                        <Input
-                            className="flex-1"
-                            placeholder="Search"
-                            onChangeText={(text) => {
-                                setInputValue(prev => ({ ...prev, search: text }))
-                            }}
-                            value={inputValue.search}
-                        />
+                    <View className=" gap-2 py-2">
+                        <View className="relative">
+                            <Input
+                                placeholder="Item Title"
+                                onChangeText={(text) => {
+                                    setInputValue(prev => ({ ...prev, title: text }))
+                                }}
+                                value={inputValue.title}
+                            />
+
+                            {/* Clear Button */}
+                            {inputValue.title.length > 0 && (
+                                <View className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setInputValue(prev => ({ ...prev, title: "" }))
+                                        }}
+                                    >
+                                        <Lucide name='x-circle' size={20} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </View>
+                        <View className="relative">
+                            <Input
+                                placeholder="Search"
+                                onChangeText={(text) => {
+                                    setInputValue(prev => ({ ...prev, search: text }))
+                                }}
+                                value={inputValue.search}
+                            />
+
+                            {/* Clear Button */}
+                            {inputValue.search.length > 0 && (
+                                <View className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setInputValue(prev => ({ ...prev, search: "" }))
+                                        }}
+                                    >
+                                        <Lucide name='x-circle' size={20} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </View>
                     </View>
 
                     {/* scanned items */}
                     <FlatList
-                        className="pb-0 flex-1"
+                        className="py-2 flex-1"
                         showsVerticalScrollIndicator={false}
                         data={data}
                         renderItem={({ item, index }) => (
@@ -171,11 +199,11 @@ const ItemsList = () => {
                 {/* below buttons */}
                 <View className='bg-background flex-row justify-between items-center  rounded-md p-1 shadow-sm shadow-black/5'>
                     {/* INVENTORY */}
-                    <Inventory invLabels={label?.invLabels ?? []} />
+                    <Inventory invLabels={label?.invLabels ?? []} fileName={inputValue.title} />
                     {/* TAGS */}
-                    <Tag employees={employees ?? []} />
+                    <Tag employees={employees ?? []} fileName={inputValue.title} />
                     {/* ORDER */}
-                    <Order orderLabels={label?.orderLabels ?? []} />
+                    <Order orderLabels={label?.orderLabels ?? []} fileName={inputValue.title} />
 
                     <Button
                         onPress={() => saveOrder()}
@@ -194,15 +222,16 @@ const ItemsList = () => {
 export default ItemsList
 
 
-const Inventory = ({ invLabels }: {
+const Inventory = ({ invLabels, fileName }: {
     invLabels: {
         id: string;
         label: string;
         saveFlag: "Inventory" | "Order";
         createdAt: Date;
         updatedAt: Date;
-        onPress: (prefix: string) => Promise<void>;
-    }[]
+        onPress: (prefix: ScanFlag, saveFlag?: string) => Promise<void>;
+    }[],
+    fileName?: string
 }) => {
 
     const { colorScheme } = useColorScheme();
@@ -211,7 +240,7 @@ const Inventory = ({ invLabels }: {
     return (
         <View className="flex-row">
             <Button
-                onPress={() => saveFile('Tags')}
+                onPress={() => saveFile(SCAN_FLAG_TYPE.Inventory, fileName)}
                 className='rounded-r-none h-8 pr-1.5'
                 size={'sm'}
             >
@@ -224,7 +253,7 @@ const Inventory = ({ invLabels }: {
                         size={'sm'}
                     >
                         <Text>
-                            <FontAwesome6 name='arrow-down' iconStyle='solid'
+                            <Lucide name='arrow-down' size={14}
                                 color={colorScheme === 'dark' ? 'black' : 'white'}
                             />
                         </Text>
@@ -235,7 +264,7 @@ const Inventory = ({ invLabels }: {
                         onPress={() => onOpen(MODAL_TYPE.LABELING.CREATE)}
                         className='flex-row'
                     >
-                        <FontAwesome6 name='circle-plus' iconStyle='solid' color={colorScheme === 'dark' ? 'white' : 'black'}
+                        <Lucide name='circle-plus' color={colorScheme === 'dark' ? 'white' : 'black'}
                         />
                         <Text className='font-semibold'>Add New</Text>
                     </DropdownMenuItem>
@@ -243,7 +272,7 @@ const Inventory = ({ invLabels }: {
                     {
                         invLabels.map(({ id, label: menuItem, onPress }, i) => (
                             <View key={id}>
-                                <DropdownMenuItem onPress={() => onPress(menuItem)}>
+                                <DropdownMenuItem onPress={() => onPress(SCAN_FLAG_TYPE.Inventory, menuItem)}>
                                     <Text className='font-semibold'>{menuItem}</Text>
                                 </DropdownMenuItem>
                                 {invLabels.length !== i + 1 && <Separator />}
@@ -256,15 +285,17 @@ const Inventory = ({ invLabels }: {
     )
 }
 
-const Order = ({ orderLabels }: {
+const Order = ({ orderLabels, fileName }: {
     orderLabels: {
         id: string;
         label: string;
         saveFlag: "Inventory" | "Order";
         createdAt: Date;
         updatedAt: Date;
-        onPress: (prefix: string) => Promise<void>;
-    }[]
+        onPress: (prefix: ScanFlag, saveFlag?: string) => Promise<void>;
+    }[],
+    fileName?: string
+
 }) => {
 
     const { colorScheme } = useColorScheme();
@@ -273,7 +304,7 @@ const Order = ({ orderLabels }: {
     return (
         <View className="flex-row">
             <Button
-                onPress={() => saveOrder()}
+                onPress={() => saveFile(SCAN_FLAG_TYPE.Order, fileName)}
                 className='rounded-r-none h-8 pr-1.5'
                 size={'sm'}
             >
@@ -286,7 +317,7 @@ const Order = ({ orderLabels }: {
                         size={'sm'}
                     >
                         <Text>
-                            <FontAwesome6 name='arrow-down' iconStyle='solid'
+                            <Lucide name='arrow-down' size={14}
                                 color={colorScheme === 'dark' ? 'black' : 'white'}
                             />
                         </Text>
@@ -295,7 +326,7 @@ const Order = ({ orderLabels }: {
                 <DropdownMenuContent side='top'>
                     <DropdownMenuItem onPress={() => onOpen(MODAL_TYPE.LABELING.CREATE)} className='flex-row'
                     >
-                        <FontAwesome6 name='circle-plus' iconStyle='solid' color={colorScheme === 'dark' ? 'white' : 'black'}
+                        <Lucide name='circle-plus' color={colorScheme === 'dark' ? 'white' : 'black'}
                         />
                         <Text className='font-semibold'>Add New</Text>
                     </DropdownMenuItem>
@@ -303,7 +334,7 @@ const Order = ({ orderLabels }: {
                         orderLabels.map(({ id, label: menuItem, onPress }, i) => (
                             <View key={id}>
                                 <DropdownMenuItem
-                                    onPress={() => onPress(menuItem)}>
+                                    onPress={() => onPress(SCAN_FLAG_TYPE.Order, menuItem)}>
                                     <Text className='font-semibold'>{menuItem}</Text>
                                 </DropdownMenuItem>
                                 {orderLabels.length !== i + 1 && <Separator />}
@@ -316,7 +347,7 @@ const Order = ({ orderLabels }: {
     )
 }
 
-const Tag = ({ employees }: {
+const Tag = ({ employees, fileName }: {
     employees: {
         emp: {
             employeeId: number;
@@ -325,8 +356,10 @@ const Tag = ({ employees }: {
             createdAt: Date;
             updatedAt: Date;
         };
-        onPress: (prefix: string) => Promise<void>;
-    }[]
+        onPress: (prefix: ScanFlag, saveFlag?: string) => Promise<void>;
+    }[],
+    fileName?: string
+
 }) => {
     const { colorScheme } = useColorScheme();
     const { onOpen } = useModalAction()
@@ -336,7 +369,7 @@ const Tag = ({ employees }: {
     return (
         <View className="flex-row">
             <Button
-                onPress={() => saveFile('Tags')}
+                onPress={() => saveFile(SCAN_FLAG_TYPE.Tags, fileName)}
                 className='rounded-r-none h-8 pr-1.5'
                 size={'sm'}
             >
@@ -349,7 +382,7 @@ const Tag = ({ employees }: {
                         size={'sm'}
                     >
                         <Text>
-                            <FontAwesome6 name='arrow-down' iconStyle='solid'
+                            <Lucide name='arrow-down' size={14}
                                 color={colorScheme === 'dark' ? 'black' : 'white'}
                             />
                         </Text>
@@ -358,7 +391,7 @@ const Tag = ({ employees }: {
                 <DropdownMenuContent side='top'>
                     <DropdownMenuItem onPress={() => onOpen(MODAL_TYPE.EMPLOYEE.CREATE)} className='flex-row'
                     >
-                        <FontAwesome6 name='circle-plus' iconStyle='solid' color={colorScheme === 'dark' ? 'white' : 'black'}
+                        <Lucide name='circle-plus' color={colorScheme === 'dark' ? 'white' : 'black'}
                         />
                         <Text className='font-semibold'>Add New</Text>
                     </DropdownMenuItem>
@@ -367,7 +400,7 @@ const Tag = ({ employees }: {
                         employees?.map(({ emp, onPress }, i) => (
                             <View key={emp.employeeId}>
                                 <DropdownMenuItem
-                                    onPress={() => onPress(`tag-${emp.name}`)}
+                                    onPress={() => onPress(SCAN_FLAG_TYPE.Tags, `${emp.name}`)}
                                     onLongPress={(c) => router.push(`/employee/${emp.employeeId}`)}
                                 >
                                     <Text className='font-semibold'>{emp.name}</Text>

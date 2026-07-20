@@ -8,11 +8,10 @@ import { getFiles } from '@/lib/expo-file-system/get-files'
 import { getDirectory } from '@/lib/expo-file-system/directory-picker'
 import { Directory, File, Paths } from 'expo-file-system'
 import { FileCard } from '@/components/shared/file-card'
-import { setDate, setHours } from 'date-fns'
+import { format, setDate, setHours } from 'date-fns'
 
 import * as ShareFile from 'expo-sharing'
 import { showError } from '@/lib/toast/error'
-import { showSuccess } from '@/lib/toast/success'
 
 const fileShare = async (existFile: File) => {
     try {
@@ -32,9 +31,27 @@ const fileShare = async (existFile: File) => {
 
         await existFile.copy(file, { overwrite: true })
 
+        const copiedFiles = directory.list()
+        const current = new Date()
+
+        const modifiedDate = current.setHours(0, 1, 0, 0)
+
+        const olderFiles = copiedFiles.filter(file => {
+            const copiedFile = new File(file)
+            return new Date(copiedFile.creationTime ?? new Date()).getTime() < modifiedDate
+        })
+
         await ShareFile.shareAsync(file.uri)
-        file.delete()
-        directory.delete()
+
+        if (olderFiles.length > 0) {
+            for (const oldFile of olderFiles) {
+                if (oldFile.exists) {
+                    oldFile.delete()
+                }
+            }
+        }
+
+
     } catch (error) {
         showError('Failed to share!')
         console.log("failed", error)
@@ -59,6 +76,7 @@ const Files = () => {
 
     const list = directory.list()
     const files = list.filter((file): file is File => file instanceof File)
+    const sortedFiles = [...files].sort((a, b) => (a.creationTime ?? 0) - (b.creationTime ?? 0))
 
 
     const deleteFiles = (date: Date) => {
@@ -87,7 +105,7 @@ const Files = () => {
             <ScrollView>
                 <View className='gap-2'>
                     {
-                        files.map(file => (
+                        sortedFiles.map(file => (
                             <FileCard
                                 key={file.uri.toString()}
                                 file={file}

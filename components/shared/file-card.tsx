@@ -11,8 +11,10 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
-import Lucide from '@react-native-vector-icons/lucide';
+import Lucide, { LucideIconName } from '@react-native-vector-icons/lucide';
 import { File } from 'expo-file-system';
+import { format } from 'date-fns';
+import { Badge } from '../ui/badge';
 
 interface FileCardProps {
     file: File
@@ -58,9 +60,11 @@ export function FileCard({
         }, 600);
     };
 
-    const isDbFile = extension === '.db'
-    const isTxtFile = extension === '.txt'
-    const isExcelFile = extension === '.xlsx'
+    const extensionMap: Record<string, LucideIconName> = {
+        ".db": "database",
+        ".txt": "file-text",
+        ".xlsx": "sheet"
+    }
 
     return (
         <Card className="w-full max-w-md">
@@ -69,10 +73,9 @@ export function FileCard({
                 <View className="flex-1 flex-row items-start gap-3">
                     <View className="rounded-lg bg-muted p-3 border border-muted">
                         <Lucide
-                            name={
-                                isTxtFile ? 'file-text' : isDbFile ? 'database' : isExcelFile ? 'sheet' : 'triangle-alert'
-                            }
-                            size={20} className="text-primary" />
+                            name={extensionMap[extension]}
+                            size={20} className="text-primary"
+                        />
                     </View>
 
                     <View className="min-w-0 flex-1">
@@ -89,7 +92,7 @@ export function FileCard({
 
             {/* File details */}
             <CardContent>
-                <View className="flex-row gap-4 border-y border-border">
+                <View className="flex-row py-2 border-y border-border">
                     {/* Size */}
                     <View className="flex-1">
                         <Text className="mb-1 text-xs font-medium text-muted-foreground">
@@ -107,13 +110,12 @@ export function FileCard({
                                 {formatFileSize(size)}
                             </Text>
                         </View>
-
                     </View>
 
                     {/* Modified */}
                     <View className="flex-1">
                         <Text className="mb-1 text-xs font-medium text-muted-foreground">
-                            Modified
+                            Modified {format(new Date(lastModified ?? new Date()), 'BBBB')}
                         </Text>
 
                         <View className="flex-row items-center gap-1.5">
@@ -126,7 +128,8 @@ export function FileCard({
                             {
                                 lastModified && (
                                     <Text className="text-sm font-semibold">
-                                        {formatDate(new Date(lastModified))}
+                                        {/* {formatDate(new Date(lastModified))} */}
+                                        {format(new Date(lastModified), 'MMM dd, yyyy | hh:mm:ss')}
                                     </Text>
                                 )
                             }
