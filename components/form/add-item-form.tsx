@@ -186,9 +186,7 @@ export default function AddItemForm() {
                     placeholder="Barcode/Item-Code"
                     keyboardType="decimal-pad"
                     returnKeyType="next"
-                    onChangeText={(text) => {
-
-                    }}
+                    onChangeText={field.onChange}
                     value={field.value}
                     onSubmitEditing={handleOnSubmitEditing}
                   />
