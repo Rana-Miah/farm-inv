@@ -19,7 +19,7 @@ const EmployeeDetails = () => {
                 employeeId={empId}
             />
             <CardWrapper
-                title="Update Employee Form"
+                title="Employee Details"
                 description="Edit that field want to update"
                 headerContent={
                     <Button

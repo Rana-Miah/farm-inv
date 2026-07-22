@@ -2,6 +2,7 @@
 import React from 'react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { View } from 'react-native'
+import { Separator } from '../ui/separator'
 
 type CardWrapperProp = {
     title: string | React.ReactNode
@@ -9,20 +10,28 @@ type CardWrapperProp = {
     children: React.ReactNode
     footerContent?: React.ReactNode
     headerContent?: React.ReactNode
+    isSeparated?: boolean
 }
 
 
-const CardWrapper = ({ title, description, children, footerContent, headerContent }: CardWrapperProp) => {
+const CardWrapper = ({ title, description, children, footerContent, headerContent, isSeparated }: CardWrapperProp) => {
     return (
-        <Card>
-            <CardHeader className='flex-row justify-between'>
+        <Card className='p-2 gap-2'>
+            <CardHeader className='flex-row justify-between px-2'>
                 <View className='gap-1'>
                     <CardTitle>{title}</CardTitle>
                     <CardDescription>{description}</CardDescription>
                 </View>
                 {headerContent && <View>{headerContent}</View>}
             </CardHeader>
-            <CardContent>{children}</CardContent>
+            {
+                isSeparated && (
+                    <View className="px-2">
+                        <Separator />
+                    </View>
+                )
+            }
+            <CardContent className='p-2'>{children}</CardContent>
             {footerContent && <CardFooter>{footerContent}</CardFooter>}
         </Card>
     )

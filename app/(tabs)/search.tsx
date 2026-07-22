@@ -16,6 +16,18 @@ import { EmptySearch } from '@/components/shared/empty-search'
 import { EmptyState } from '@/components/shared/empty-state'
 import { NoSearchResults } from '../../components/shared/no-result-found'
 import { LoadingState } from '@/components/shared/loading-state'
+import CardWrapper from '@/components/shared/card-wrapper'
+import { Separator } from '@/components/ui/separator'
+
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 const Search = () => {
     const [searchValue, setSearchValue] = useState('')
     const { debouncedValue, isLoading } = useDebounce(searchValue)
@@ -128,48 +140,56 @@ const SearchItemDetailsCard = React.memo(
         index: number;
         isDark: boolean;
     }) => {
-        const [isCopied, setIsCopied] = useState(false)
-        useEffect(() => {
-            const timer = setTimeout(() => {
-                setIsCopied(false)
-            }, 3000);
-
-            return () => clearTimeout(timer)
-        }, [isCopied])
-
-
-        const onCopy = async (barcode: string) => {
-            await Clipboard.setStringAsync(barcode);
-            showSuccess(`Barcode ${barcode} copied!`)
-            setIsCopied(true)
-        }
-
 
         return (
             <Card className='p-1 gap-1 mb-2'>
-                <CardHeader className='p-1'>
-                    <CardTitle>Search Item {index + 1}</CardTitle>
-                    <CardDescription>Item details</CardDescription>
-                </CardHeader>
-                <CardContent className='p-1 gap-1'>
-                    <View className=" flex-row items-center justify-between">
-                        <View className="flex-[1]">
-                            <DetailsRow
-                                library='Lucide'
-                                iconName='barcode'
-                                label='Barcode'
-                                value={item.barcode}
-                            />
-                        </View>
-                        <Button size={'sm'} onPress={() => onCopy(item.barcode)}>
-                            <View className="flex-row item-center justify-center gap-1 text-sm">
-                                <Lucide name='copy' size={14} color={isDark ? 'black' : 'white'} />
-                                <Text>{isCopied ? 'Copied' : 'Copy'}</Text>
-                            </View>
-
-                        </Button>
-
+                <CardHeader className='flex-row justify-between p-1'>
+                    <View className='gap-1'>
+                        <CardTitle>Search Item {index + 1}</CardTitle>
+                        <CardDescription>Item details</CardDescription>
                     </View>
+                    <View>
+                        <DropdownMenu >
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant={'outline'}
+                                    size={'sm'}
+                                >
+                                    <Text>
+                                        <Lucide
+                                            name='ellipsis-vertical'
+                                            color={'black'}
+                                            size={18}
+                                        />
+                                    </Text>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align='end' className='gap-1 mt-1'>
+                                <DropdownMenuLabel className='py-1'>
+                                    <Text>Actions</Text>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator className=' mt-0' />
+                                <DropdownMenuItem className='border-2 border-muted'>
+                                    <Text>Add to Inv</Text>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className='border-2 border-muted'>
+                                    <Text>Add to Tags</Text>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className='border-2 border-muted'>
+                                    <Text>Add to Order</Text>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </View>
+                </CardHeader>
+
+                <CardContent className='p-1 gap-1'>
+                    <DetailsRow
+                        library='Lucide'
+                        iconName='barcode'
+                        label='Barcode'
+                        value={item.barcode}
+                    />
                     <DetailsRow
                         library='Lucide'
                         iconName='hash'

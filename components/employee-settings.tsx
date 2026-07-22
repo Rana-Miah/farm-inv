@@ -24,6 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { Separator } from './ui/separator'
 import { useRouter } from 'expo-router'
+import { EmployeeCard } from './employee-card'
 
 
 const createXl = async () => {
@@ -139,7 +140,7 @@ const EmployeeSettings = () => {
 
 
             <ScrollView>
-                <View className="gap-1 bg-red-500 flex-1">
+                <View className="gap-1 flex-1">
                     <Button onPress={async () => {
                         await inventoryDb.delete(employeeTable)
                         invalidateEmployeeGetQuery()
@@ -173,100 +174,3 @@ const EmployeeSettings = () => {
 export default EmployeeSettings
 
 
-
-const EmployeeCard = (
-    { employeeName, employeeId }: { employeeName: string, employeeId: string }
-) => {
-
-    const [isLoginState, setIsLoginState] = useState(false)
-
-    return (
-
-        <View className="gap-2 border border-muted rounded-lg px-4 py-2">
-            {isLoginState && (
-                <>
-                    <View>
-                        <CardTitle>{employeeId}</CardTitle>
-                        <CardDescription>{employeeName}</CardDescription>
-                    </View>
-                    <Separator />
-                </>
-            )
-            }
-            <View className="flex-row items-center justify-between gap-2">
-
-                {isLoginState ? (
-                    <View className='flex-1'>
-                        <EmployeeLoginForm employeeId={employeeId} />
-                    </View>
-                ) : (
-                    <View>
-                        <CardTitle>{employeeId}</CardTitle>
-                        <CardDescription>{employeeName}</CardDescription>
-                    </View>
-                )}
-                <Pressable
-                    className='active:bg-muted-foreground rounded-full border border-muted bg-muted '
-                    onPress={() => setIsLoginState(prev => !prev)}
-                >
-
-                    <View className="items-center justify-center p-3">
-                        <Lucide
-                            name='arrow-right'
-                            size={20}
-                        />
-                    </View>
-                </Pressable>
-            </View>
-        </View>
-    )
-}
-
-
-const employeeLoginFormSchema = z.object({
-    password: z.string().nonempty({ error: 'Password is Required!' }),
-})
-
-const EmployeeLoginForm = ({ employeeId }: { employeeId: string }) => {
-    const router = useRouter()
-
-    const form = useForm<z.infer<typeof employeeLoginFormSchema>>({
-        defaultValues: {
-            password: ""
-        },
-        resolver: zodResolver(employeeLoginFormSchema),
-        mode: 'onSubmit',
-        reValidateMode: 'onSubmit',
-        shouldFocusError: false
-    })
-
-    const onSubmit = form.handleSubmit(values => {
-        console.log({ values })
-        router.push({
-            pathname: '/employee/[empId]',
-            params: { empId: employeeId }
-        })
-    })
-
-    return (
-        <Form {...form}>
-            <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => {
-
-                    return (
-                        <InputField
-                            {...field}
-                            autoFocus
-                            value={field.value}
-                            placeholder="Password"
-                            onSubmitEditing={onSubmit}
-                            onChangeText={field.onChange}
-                        />
-                    )
-                }}
-            />
-        </Form>
-    )
-}

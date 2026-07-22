@@ -1,6 +1,6 @@
 import { View, } from 'react-native'
 import React from 'react'
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import CardWrapper from '@/components/shared/card-wrapper';
@@ -18,7 +18,28 @@ const EmployeeDetails = () => {
                 title="Employee settings"
                 description={`Employee ${empId}`}
             >
-                <Text>Todo</Text>
+                <View className='gap-2'>
+                    <Link
+                        href={`/employee/${empId}/expiry-scan`}
+                        asChild
+                    >
+                        <Button>
+                            <Text>
+                                Expiry Scanning
+                            </Text>
+                        </Button>
+                    </Link>
+                    <Link
+                        href={`/employee/${empId}/details`}
+                        asChild
+                    >
+                        <Button>
+                            <Text>
+                                Employee Details
+                            </Text>
+                        </Button>
+                    </Link>
+                </View>
             </CardWrapper>
         </Container>
     )
