@@ -187,21 +187,7 @@ export default function AddItemForm() {
                     keyboardType="decimal-pad"
                     returnKeyType="next"
                     onChangeText={(text) => {
-                      if (/^\d*\.?\d*$/.test(text)) {
-                        if (text.length === 0) {
-                          resetGetItem()
-                          handleResetForm();
-                        } else {
-                          field.onChange(text)
-                        }
-                      } else {
-                        const [before, after, ...rest] = text.split(".")
 
-                        field.onChange(`${before}.${after}`)
-                        console.log({
-                          before, after, rest
-                        })
-                      }
                     }}
                     value={field.value}
                     onSubmitEditing={handleOnSubmitEditing}
@@ -295,8 +281,21 @@ export default function AddItemForm() {
                       placeholder="Quantity"
                       keyboardType="numeric"
                       returnKeyType="go"
-                      value={field.value.toString()}
-                      onChangeText={field.onChange}
+                      value={field.value}
+                      onChangeText={(text) => {
+                        if (/^\d*\.?\d*$/.test(text)) {
+                          if (text.length === 0) {
+                            resetGetItem()
+                            handleResetForm();
+                          } else {
+                            field.onChange(text)
+                          }
+                        } else {
+                          const [before, after, ...rest] = text.split(".")
+                          //TODO getting undefined from here
+                          field.onChange(`${before}.${after}`)
+                        }
+                      }}
                       onSubmitEditing={onSubmit}
                     />
                   )

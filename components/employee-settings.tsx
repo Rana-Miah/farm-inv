@@ -1,4 +1,4 @@
-import { View, } from 'react-native'
+import { FlatList, Pressable, ScrollView, View, } from 'react-native'
 import { Button } from './ui/button'
 import { Text } from './ui/text'
 import { inventoryDb } from '@/drizzle/db/inventory-db'
@@ -12,6 +12,9 @@ import { showSuccess } from '@/lib/toast/success'
 import { getScannedItems } from '@/dal/item/get-item'
 import { deleteScannedItems } from '@/dal/item/delete-items'
 import { File } from 'expo-file-system'
+import { CardDescription, CardHeader, CardTitle } from './ui/card'
+import Lucide from '@react-native-vector-icons/lucide'
+import { useEmployeesGetQuery } from '@/hooks/tanstack/mutation/employee'
 
 
 const createXl = async () => {
@@ -91,7 +94,7 @@ const createXl = async () => {
 
 
 const EmployeeSettings = () => {
-
+    const { data: employees } = useEmployeesGetQuery()
 
     const deleteInventoryDb = async () => {
         const directory = ensureDbDir()
@@ -109,33 +112,74 @@ const EmployeeSettings = () => {
 
 
     return (
-        <View className='gap-3'>
-            <Button onPress={async () => {
-                await inventoryDb.delete(employeeTable)
-                invalidateEmployeeGetQuery()
-            }}>
-                <Text>Delete Emp</Text>
-            </Button>
-            <Button onPress={async () => {
-                await inventoryDb.delete(labelingTable)
-                invalidateLabelingGetQuery()
-            }}>
-                <Text>Delete Labeling</Text>
-            </Button>
-            <Button onPress={createXl}>
-                <Text>create xl</Text>
-            </Button>
-            <Button onPress={getScannedItems}>
-                <Text>stored data</Text>
-            </Button>
-            <Button onPress={deleteScannedItems}>
-                <Text>delete scanned data</Text>
-            </Button>
-            <Button onPress={deleteInventoryDb}>
-                <Text>delete db</Text>
-            </Button>
-        </View>
+        <ScrollView>
+            <View className='gap-3 '>
+
+                <View className="gap-1">
+                    <FlatList
+                        data={employees ?? []}
+                        keyExtractor={({ emp }) => emp.employeeId}
+                        renderItem={({ item }) => {
+                            return (
+                                <EmployeeCard employeeId={item.emp.employeeId} employeeName={item.emp.name} />
+                            )
+                        }}
+                    />
+                </View>
+
+
+                <Button onPress={async () => {
+                    await inventoryDb.delete(employeeTable)
+                    invalidateEmployeeGetQuery()
+                }}>
+                    <Text>Delete Emp</Text>
+                </Button>
+                <Button onPress={async () => {
+                    await inventoryDb.delete(labelingTable)
+                    invalidateLabelingGetQuery()
+                }}>
+                    <Text>Delete Labeling</Text>
+                </Button>
+                <Button onPress={createXl}>
+                    <Text>create xl</Text>
+                </Button>
+                <Button onPress={getScannedItems}>
+                    <Text>stored data</Text>
+                </Button>
+                <Button onPress={deleteScannedItems}>
+                    <Text>delete scanned data</Text>
+                </Button>
+                <Button onPress={deleteInventoryDb}>
+                    <Text>delete db</Text>
+                </Button>
+            </View>
+        </ScrollView>
     )
 }
 
 export default EmployeeSettings
+
+
+
+const EmployeeCard = (
+    { employeeName, employeeId }: { employeeName: string, employeeId: string }
+) => {
+
+    return (
+        <View className="flex-row flex-1 items-center justify-between gap-2 border border-muted rounded-lg shadow-black shadow-md px-4 py-2">
+            <View>
+                <CardTitle>{employeeId}</CardTitle>
+                <CardDescription>{employeeName}</CardDescription>
+            </View>
+            <Pressable>
+
+                <View className="rounded-full border border-muted bg-muted items-center justify-center p-3">
+                    <Lucide
+                        name='arrow-right'
+                        size={20}
+                    />
+                </View>
+            </Pressable>
+        </View>
+    )
+}
