@@ -75,7 +75,8 @@ export const ExpiryScanForm = () => {
                 open={isRemindBeforeCreateModal || isShelfNoCreateModal}
             >
                 <View>
-                    <ShelfNoForm empId={empId} />
+                    {isShelfNoCreateModal && <ShelfNoForm empId={empId} />}
+                    {isRemindBeforeCreateModal && <RemindBeforeForm empId={empId} />}
                 </View>
             </Modal>
 
@@ -308,6 +309,71 @@ export const ShelfNoForm = ({ empId }: { empId: string | string[] }) => {
                         <InputField
                             {...field}
                             placeholder='e.g. B1,B2,A1'
+                            returnKeyType='next'
+                            onChangeText={field.onChange}
+                            value={field.value}
+                        />
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name='empPassword'
+                    render={({ field }) => (
+                        <InputField
+                            {...field}
+                            placeholder='Employee Password'
+                            returnKeyType='next'
+                            onChangeText={field.onChange}
+                            onSubmitEditing={onSubmit}
+                            value={field.value}
+                        />
+                    )}
+                />
+            </View>
+        </Form >
+    )
+}
+
+export const remindBeforeCreateFormSchema = z.object({
+    remindBefore: z.string().trim().min(2, { error: "Must be 2 characters long" }).nonempty({ error: 'Shelf No is required' }),
+    empPassword: z.string().nonempty({ error: 'Password is required' })
+})
+
+export type RemindBeforeCreateFormValue = z.infer<typeof remindBeforeCreateFormSchema>
+
+export const RemindBeforeForm = ({ empId }: { empId: string | string[] }) => {
+
+    const { onClose } = useModalAction()
+    const form = useForm<RemindBeforeCreateFormValue>({
+        defaultValues: {
+            remindBefore: "",
+            empPassword: ""
+        },
+        resolver: zodResolver(remindBeforeCreateFormSchema),
+        mode: 'onSubmit',
+        reValidateMode: 'onSubmit',
+        shouldFocusError: false
+    })
+
+    const onSubmit = form.handleSubmit(values => {
+        console.log({ values })
+        form.reset()
+        onClose()
+    })
+
+    return (
+        <Form
+            {...form}
+        >
+            <View className="gap-1">
+                {/* BARCODE FIELD */}
+                <FormField
+                    control={form.control}
+                    name='remindBefore'
+                    render={({ field }) => (
+                        <InputField
+                            {...field}
+                            placeholder='e.g. 5,7,10 (days)'
                             returnKeyType='next'
                             onChangeText={field.onChange}
                             value={field.value}
