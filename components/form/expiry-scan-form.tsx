@@ -15,12 +15,13 @@ import { MODAL_TYPE } from '@/constants'
 import Modal from '../shared/modal'
 import { Text } from '../ui/text'
 import { Button } from '../ui/button'
+import { Separator } from '../ui/separator'
 
 export const expiryScanFormSchema = z.object({
     barcode: z.string().trim().nonempty(),
     expireIn: z.string().trim().nonempty().min(6, { error: 'Minimum 6 characters long!' }).max(10, { error: 'Maximum 10 characters long!' }),
-    remindBefore: z.string().trim().nonempty(),
-    shelfNo: z.string().trim().nonempty(),
+    remindBefore: z.string().trim().nonempty({ error: 'Select remind before day' }),
+    shelfNo: z.string().trim().nonempty({ error: 'Select Shelf NO' }),
 })
 
 export type ExpireScanFormValue = z.infer<typeof expiryScanFormSchema>
@@ -63,8 +64,19 @@ export const ExpiryScanForm = () => {
 
 
 
+    const onSubmit = form.handleSubmit((values) => {
+        console.log({ values })
+    })
     const onBarcodeSubmit = () => {
-
+        const barcode = form.getValues('barcode')
+        getItemDetails(barcode, {
+            onSuccess({ data, success, message }) {
+                if (success) {
+                    expireInRef?.current?.focus()
+                    return
+                }
+            }
+        })
     }
 
 
@@ -232,6 +244,7 @@ export const ExpiryScanForm = () => {
                                 {...field}
                                 placeholder='Barcode'
                                 returnKeyType='next'
+                                keyboardType='numeric'
                                 onChangeText={field.onChange}
                                 value={field.value}
                                 onSubmitEditing={onBarcodeSubmit}
@@ -254,6 +267,8 @@ export const ExpiryScanForm = () => {
                                 returnKeyType='next'
                                 onChangeText={field.onChange}
                                 value={field.value}
+                                keyboardType='numeric'
+                                onSubmitEditing={onSubmit}
                                 ref={expireInRef}
                             />
                         )}
@@ -265,11 +280,20 @@ export const ExpiryScanForm = () => {
 
             {/* Item Details */}
 
-            {(item?.data) && <ItemDetails
-                item={item?.data ?? {}}
-                title='Item Details'
-                description='Item scanned for expiry monitoring!'
-            />}
+            {(item?.data) && (
+                <>
+                    <Separator className='my-3 ' />
+                    <ItemDetails
+                        item={{
+                            ...item.data,
+                            isDuplicated: false,
+                            itemUoms: []
+                        }}
+                        title='Item Details'
+                        description='Item scanned for expiry monitoring!'
+                    />
+                </>
+            )}
         </View>
     )
 }
