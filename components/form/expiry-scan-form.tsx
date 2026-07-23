@@ -8,7 +8,7 @@ import InputField from '../shared/input-field'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '../ui/select'
 import { useLocalSearchParams } from 'expo-router'
 import { ItemDetails } from '../shared/item-details'
-import { useGetItemByBarcode } from '@/hooks/tanstack/mutation/item/get-item'
+import { useGetItemByBarcode, useGetItemDetailsByBarcode } from '@/hooks/tanstack/mutation/item/get-item'
 import { useAlertModal, useAlertModalAction } from '@/hooks/redux/use-alert-modal'
 import { useModal, useModalAction } from '@/hooks/redux/use-modal'
 import { MODAL_TYPE } from '@/constants'
@@ -44,7 +44,7 @@ export const ExpiryScanForm = () => {
     const description = 'Fill the following fields'
 
 
-    const { mutate: getItem, data: item } = useGetItemByBarcode()
+    const { mutate: getItemDetails, data: item } = useGetItemDetailsByBarcode()
 
 
 
@@ -62,6 +62,10 @@ export const ExpiryScanForm = () => {
     })
 
 
+
+    const onBarcodeSubmit = () => {
+
+    }
 
 
     return (
@@ -230,6 +234,7 @@ export const ExpiryScanForm = () => {
                                 returnKeyType='next'
                                 onChangeText={field.onChange}
                                 value={field.value}
+                                onSubmitEditing={onBarcodeSubmit}
                                 ref={barcodeRef}
                             />
                         )}
@@ -260,8 +265,8 @@ export const ExpiryScanForm = () => {
 
             {/* Item Details */}
 
-            {(item?.data?.item) && <ItemDetails
-                item={item?.data?.item}
+            {(item?.data) && <ItemDetails
+                item={item?.data ?? {}}
                 title='Item Details'
                 description='Item scanned for expiry monitoring!'
             />}
